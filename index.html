@@ -1,0 +1,816 @@
+final_code = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Escalation Project</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        
+        :root {
+            --bg-color: #f0f4f8;
+            --text-color: #000;
+            --trunk-color: #333;
+        }
+        
+        body.dark-mode {
+            --bg-color: #121212;
+            --text-color: #000; 
+            --trunk-color: #00ffcc;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            overflow-x: hidden;
+            transition: background-color 0.5s ease;
+        }
+
+        /* --- Landing Page Styles --- */
+        #landing-page {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: var(--bg-color);
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        
+        #landing-page h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: var(--text-color);
+        }
+
+        .conflict-btn {
+            padding: 15px 40px;
+            margin: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            transition: transform 0.2s, background-color 0.3s;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-us-iran { background-color: #444; }
+        .btn-saudi-houthi { background-color: #666; }
+        
+        .conflict-btn:hover { transform: scale(1.05); }
+
+        body.dark-mode #landing-page {
+            background-color: #121212;
+        }
+        body.dark-mode #landing-page h1 {
+            color: #fff;
+        }
+
+        /* --- Main Timeline Styles --- */
+        #main-content {
+            display: none;
+        }
+
+        /* Giant Translucent Flags Background Split Down the Middle */
+        .bg-flags {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            display: flex;
+            pointer-events: none;
+        }
+        .bg-left {
+            width: 50%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            transition: opacity 0.5s;
+        }
+        .bg-right {
+            width: 50%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            transition: opacity 0.5s;
+        }
+        body.dark-mode .bg-left, body.dark-mode .bg-right {
+            opacity: 0.05;
+        }
+
+        /* Buttons Top Right */
+        .top-right-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 200;
+            display: flex;
+            gap: 15px;
+        }
+        .control-btn {
+            padding: 8px 16px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Top Left Info Panel */
+        #info-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 250;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-size: 0.7rem;
+            max-width: 220px;
+            display: none; 
+        }
+        body.dark-mode #info-panel {
+            background: rgba(30, 30, 30, 0.95);
+            color: #fff;
+        }
+        .info-line {
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        .info-button-container {
+            position: relative;
+            margin-top: 8px;
+        }
+        .info-button {
+            background: #444;
+            color: #fff;
+            padding: 6px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            text-align: center;
+            font-weight: bold;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        .info-button:hover, .info-button.active {
+            background: #222;
+            color: #00ffcc;
+        }
+
+        /* Tooltip fix: zero dead-zone & invisible hover-bridge pseudo element */
+        .info-tooltip {
+            visibility: hidden;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            background: #1e1e1e;
+            color: #fff;
+            padding: 16px 18px;
+            border-radius: 8px;
+            width: 360px;
+            max-height: 55vh;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            font-weight: normal;
+            line-height: 1.5;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            border: 1px solid #444;
+            z-index: 400;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        /* Invisible bridge connecting button directly to tooltip */
+        .info-tooltip::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 0;
+            width: 100%;
+            height: 16px;
+            background: transparent;
+        }
+
+        /* Show on hover OR when pinned/active */
+        .info-button-container:hover .info-tooltip,
+        .info-button-container.pinned .info-tooltip {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* --- Playing Cards Decks (Unstacked Flex) --- */
+        .deck-left, .deck-right {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 140px; 
+            z-index: 150;
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .deck-left::-webkit-scrollbar, .deck-right::-webkit-scrollbar { display: none; }
+        .deck-left { left: 20px; }
+        .deck-right { right: 20px; }
+
+        .playing-card {
+            position: relative; 
+            width: 100%;
+            min-height: 90px;
+            background: #fff;
+            color: #111;
+            border-radius: 6px;
+            padding: 12px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 0.75rem;
+            font-weight: 900;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+            cursor: pointer;
+            border: 4px solid #ccc;
+        }
+        
+        .left-playing-card { border-color: red; }
+        .left-playing-card:hover {
+            transform: scale(1.15) translateX(10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            z-index: 200;
+        }
+        
+        .right-playing-card { border-color: blue; }
+        .right-playing-card:hover {
+            transform: scale(1.15) translateX(-10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            z-index: 200;
+        }
+
+        /* --- Timeline & Events --- */
+        .container {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 220px 180px 50px 180px; 
+        }
+
+        .trunk {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 100px;
+            width: 6px;
+            background-color: var(--trunk-color);
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px var(--trunk-color);
+        }
+
+        .event-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 80px;
+            position: relative;
+            width: 100%;
+        }
+
+        .date {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #222; 
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #fff; 
+            z-index: 10;
+            border: 1px solid #555;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            white-space: nowrap;
+        }
+
+        /* Checkpoint Styling */
+        .checkpoint-container {
+            margin-bottom: 80px;
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .checkpoint {
+            background: #ffcc00;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 900;
+            text-align: center;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(255, 204, 0, 0.5);
+            border: 2px solid #333;
+        }
+        .checkpoint-days {
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 5px;
+            color: #333;
+        }
+
+        .card {
+            width: 42%;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-color);
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border-radius: 8px; 
+            font-weight: 700;   
+            font-size: 0.9rem;
+        }
+        .card.blank {
+            background: transparent;
+            box-shadow: none;
+            border: 2px dashed rgba(150,150,150,0.5);
+            cursor: default;
+        }
+        .card.blank:hover {
+            transform: none;
+        }
+
+        .card:hover:not(.blank) {
+            transform: scale(1.05);
+        }
+        
+        .event-id {
+            position: absolute;
+            bottom: 5px;
+            font-size: 0.65rem;
+            color: #777;
+            font-weight: 900;
+            opacity: 0.8;
+            background: rgba(0,0,0,0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .left-card .event-id { right: 8px; }
+        .right-card .event-id { left: 8px; }
+        
+        .tooltip {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; 
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            width: 200px;
+            font-size: 0.8rem;
+            font-weight: 400; 
+        }
+
+        .card:hover:not(.blank) .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .left-card {
+            border: 2px solid rgba(255, 0, 0, 0.4);
+        }
+
+        .right-card {
+            margin-left: auto;
+            border: 2px solid rgba(0, 0, 255, 0.4);
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 50px;
+            font-size: 3rem;
+            font-weight: 900;
+        }
+        
+        .footer-left { color: red; }
+        .footer-right { color: blue; }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @media (max-width: 900px) {
+            .deck-left, .deck-right { display: none; } 
+            .container { padding: 180px 20px 50px 20px; }
+            .info-tooltip { width: 260px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Landing Page -->
+    <div id="landing-page">
+        <h1>Select Conflict Zone</h1>
+        <button class="conflict-btn btn-us-iran" onclick="loadConflict('US_IRAN')">USA vs IRAN</button>
+        <button class="conflict-btn btn-saudi-houthi" onclick="loadConflict('SAUDI_HOUTHI')">SAUDI vs HOUTHIS</button>
+    </div>
+
+    <!-- Main Timeline Content -->
+    <div id="main-content">
+        
+        <div class="bg-flags">
+            <div class="bg-left" id="bg-left"></div>
+            <div class="bg-right" id="bg-right"></div>
+        </div>
+
+        <!-- Top Right Controls -->
+        <div class="top-right-controls">
+            <button class="control-btn" onclick="showLanding()">Back to Zones</button>
+            <button class="control-btn" id="theme-toggle">Dark Mode</button>
+        </div>
+
+        <!-- Top Left Dynamic Info Panel -->
+        <div id="info-panel">
+            <div class="info-line" id="info-start-date"></div>
+            <div class="info-line" id="info-days-count"></div>
+            
+            <div class="info-button-container" id="mou-container" style="display:none;">
+                <div class="info-button" onclick="togglePin('mou-container')">14 Points of June MOU</div>
+                <div class="info-tooltip" id="mou-tooltip"></div>
+            </div>
+
+            <div class="info-button-container" id="demands-container" style="display:none;">
+                <div class="info-button" onclick="togglePin('demands-container')">7 Demands by Iran for talks to begin</div>
+                <div class="info-tooltip" id="demands-tooltip"></div>
+            </div>
+        </div>
+        
+        <canvas id="particles"></canvas>
+
+        <!-- Playing Cards Deck Left -->
+        <div class="deck-left" id="deck-left"></div>
+        <!-- Playing Cards Deck Right -->
+        <div class="deck-right" id="deck-right"></div>
+
+        <div class="container" id="timeline">
+            <div class="trunk"></div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-left" id="label-left">USA</div>
+            <div class="footer-right" id="label-right">IRAN</div>
+        </div>
+
+    </div>
+
+    <script>
+        const midtermElectionDate = "2026-11-03"; 
+        
+        function calculateDaysUntil(dateString) {
+            const target = new Date(dateString);
+            const now = new Date();
+            const diffTime = target - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        function calculateDaysSince(dateString) {
+            const start = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - start);
+            return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        // Toggle Click-to-Pin so user can also click and freely scroll without losing tooltip
+        function togglePin(containerId) {
+            const container = document.getElementById(containerId);
+            const isPinned = container.classList.contains('pinned');
+            
+            // Close any other pinned container
+            document.querySelectorAll('.info-button-container').forEach(c => c.classList.remove('pinned'));
+            
+            if (!isPinned) {
+                container.classList.add('pinned');
+            }
+        }
+
+        // Close pinned tooltips if clicked outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.info-button-container')) {
+                document.querySelectorAll('.info-button-container').forEach(c => c.classList.remove('pinned'));
+            }
+        });
+
+        const conflictData = {
+            'US_IRAN': {
+                nameLeft: "USA",
+                nameRight: "IRAN",
+                flagLeft: "url('https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg')",
+                flagRight: "url('https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Iran.svg')",
+                startDateText: "Conflict Started: February 28, 2026",
+                startDateObj: "2026-02-28",
+                mouContent: `<strong>14 Points of the June MOU</strong><br><br>
+                1. Ceasing hostilities “on all fronts”.<br><br>
+                2. Respect for sovereignty, territorial integrity and internal affairs.<br><br>
+                3. Negotiating a final deal within 60 days.<br><br>
+                4. Lifting the US blockade and removing its forces within 30 days.<br><br>
+                5. Iran will facilitate commercial shipping traffic through Strait of Hormuz.<br><br>
+                6. Developing a US$300 billion reconstruction plan for Iran.<br><br>
+                7. The US and the UN will terminate sanctions on Iran.<br><br>
+                8. Iran will not procure a nuclear weapon and allow inspections.<br><br>
+                9. Both sides will “maintain the status quo” until the final deal.<br><br>
+                10. The US will lift sanctions on Iranian oil.<br><br>
+                11. The US will enable access to frozen funds.<br><br>
+                12. A monitoring mechanism will be established.<br><br>
+                13. Certain parts of the MOU must be met before others are discussed.<br><br>
+                14. The final deal will be endorsed in a UN Security Council resolution.`,
+                demandsContent: `<strong>7 Demands by Iran for talks to begin regarding reopening of Strait of Hormuz, and a permanent end to war.</strong><br><br>
+                1. The US must lift the maritime blockade imposed on Iran. This refers to ending the naval restrictions/blockade on Iranian ports and shipping that Iranian officials describe as part of the ongoing pressure and conflict.<br><br>
+                2. Iran’s frozen assets should be restored. Full release/return of Iranian financial assets that have been frozen or seized (figures cited in related Iranian statements have ranged into the tens or around $100 billion in some reports).<br><br>
+                3. Sanctions imposed on Iran’s oil exports must be lifted. Removal of restrictions specifically targeting Iranian oil sales and exports.<br><br>
+                4. All actions being taken by the US under the pretext of threats and military operations must be halted completely. A complete stop to US military threats, operations, and related pressure measures against Iran.<br><br>
+                5. An end to the war and military aggression against Iran and its regional allies. Cessation of hostilities “on all fronts,” including against Iran itself and its regional partners/allies (Lebanon/Hezbollah, Gaza, Yemen/Houthis, and related theaters have been repeatedly referenced in Rezaei’s broader comments).<br><br>
+                6. The withdrawal of US military forces from areas surrounding Iran’s borders. Pullback of American forces from the broader region near Iran.<br><br>
+                7. Compensation for the damage inflicted on Iran, and a commitment not to interfere with Iran’s nuclear and missile capabilities. Payment for wartime damages (some earlier Iranian statements have referenced figures as high as ~$300 billion in related contexts) plus a pledge of non-interference in Iran’s nuclear program and missile capabilities.<br><br>
+                Source: Mohsen Rezaei on X`,
+                cardsLeft: [
+                    "Destroy pickaxe mountain",
+                    "Restart military strikes",
+                    "Make a deal",
+                    "More economic pressure"
+                ],
+                cardsRight: [
+                    "Destroy all US bases in the region",
+                    "Withdraw from NPT",
+                    "Cut the undersea cables",
+                    "Strike US Navy"
+                ],
+                events: [
+                    {
+                        type: "checkpoint",
+                        text: "KEY CHECKPOINT: US Midterm Elections",
+                        dateObj: midtermElectionDate
+                    },
+                    {
+                        type: "event",
+                        date: "20-09-2026",
+                        left: "", 
+                        right: "IRAN SAYS ITS RETALIATION WILL BE without any Limitations and considerations."
+                    },
+                    {
+                        type: "event",
+                        date: "19-09-2026",
+                        left: "Trump says he is going to destroy iran if they dont behave.",
+                        right: "Iran threatens retaliation."
+                    },
+                    {
+                        type: "event",
+                        date: "18-09-2026",
+                        left: "Trump issued warning to embassies of all gulf countries tpo be alert because hes going to take a major decision. A. Strike, B. Economic pressure, C. Deal.",
+                        right: "Iran deploys around 450k troops to its borders."
+                    }
+                ]
+            },
+            'SAUDI_HOUTHI': {
+                nameLeft: "SAUDI ARABIA",
+                nameRight: "HOUTHIS",
+                flagLeft: "url('https://upload.wikimedia.org/wikipedia/commons/0/0d/Flag_of_Saudi_Arabia.svg')",
+                flagRight: "url('https://upload.wikimedia.org/wikipedia/commons/8/89/Flag_of_Yemen.svg')", 
+                startDateText: null, 
+                startDateObj: null,
+                mouContent: null,
+                demandsContent: null,
+                cardsLeft: [], 
+                cardsRight: [], 
+                events: [
+                    {
+                        type: "event",
+                        date: "Placeholder Date",
+                        left: "Saudi Arabia placeholder event.",
+                        right: "Houthis placeholder event."
+                    }
+                ]
+            }
+        };
+
+        const timelineContainer = document.getElementById('timeline');
+        const deckLeftContainer = document.getElementById('deck-left');
+        const deckRightContainer = document.getElementById('deck-right');
+        const infoPanel = document.getElementById('info-panel');
+        
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound() {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function renderDeck(container, cardsData, isLeft) {
+            container.innerHTML = ''; 
+            cardsData.forEach((cardText, index) => {
+                const card = document.createElement('div');
+                card.className = `playing-card ${isLeft ? 'left-playing-card' : 'right-playing-card'}`;
+                card.innerText = cardText;
+
+                card.onmouseenter = () => {
+                    playSound();
+                };
+
+                container.appendChild(card);
+            });
+        }
+
+        function loadConflict(zoneId) {
+            const data = conflictData[zoneId];
+            
+            const leftPrefix = data.nameLeft.charAt(0).toUpperCase();
+            const rightPrefix = data.nameRight.charAt(0).toUpperCase();
+
+            document.getElementById('label-left').innerText = data.nameLeft;
+            document.getElementById('label-right').innerText = data.nameRight;
+            document.getElementById('bg-left').style.backgroundImage = data.flagLeft;
+            document.getElementById('bg-right').style.backgroundImage = data.flagRight;
+
+            renderDeck(deckLeftContainer, data.cardsLeft, true);
+            renderDeck(deckRightContainer, data.cardsRight, false);
+
+            if(data.startDateText) {
+                infoPanel.style.display = 'block';
+                document.getElementById('info-start-date').innerText = data.startDateText;
+                document.getElementById('info-days-count').innerText = `Days since war started: ${calculateDaysSince(data.startDateObj)}`;
+                
+                if (data.mouContent) {
+                    document.getElementById('mou-container').style.display = 'block';
+                    document.getElementById('mou-tooltip').innerHTML = data.mouContent;
+                }
+                
+                if (data.demandsContent) {
+                    document.getElementById('demands-container').style.display = 'block';
+                    document.getElementById('demands-tooltip').innerHTML = data.demandsContent;
+                }
+            } else {
+                infoPanel.style.display = 'none';
+            }
+
+            timelineContainer.innerHTML = '<div class="trunk"></div>';
+
+            const actualEventsCount = data.events.filter(e => e.type === 'event').length;
+            let currentEventCounter = actualEventsCount;
+
+            data.events.forEach((evt) => {
+                if (evt.type === 'checkpoint') {
+                    const row = document.createElement('div');
+                    row.className = 'checkpoint-container';
+                    
+                    const daysRemaining = calculateDaysUntil(evt.dateObj);
+                    let daysText = daysRemaining > 0 ? `${daysRemaining} days remaining` : "Date Passed";
+                    
+                    row.innerHTML = `
+                        <div class="checkpoint">
+                            ${evt.text}
+                            <div class="checkpoint-days">${daysText}</div>
+                        </div>
+                    `;
+                    timelineContainer.appendChild(row);
+
+                } else if (evt.type === 'event') {
+                    const row = document.createElement('div');
+                    row.className = 'event-container';
+                    
+                    const leftCard = document.createElement('div');
+                    leftCard.className = `card left-card ${!evt.left ? 'blank' : ''}`;
+                    if(evt.left) {
+                        leftCard.innerHTML = `<p>${evt.left}</p><span class="event-id">${leftPrefix}.${currentEventCounter}</span><span class="tooltip">News Links & Refs Coming Soon</span>`;
+                        leftCard.onmouseenter = playSound;
+                    }
+
+                    const dateLabel = document.createElement('div');
+                    dateLabel.className = 'date';
+                    dateLabel.innerText = evt.date;
+
+                    const rightCard = document.createElement('div');
+                    rightCard.className = `card right-card ${!evt.right ? 'blank' : ''}`;
+                    if(evt.right) {
+                        rightCard.innerHTML = `<p>${evt.right}</p><span class="event-id">${rightPrefix}.${currentEventCounter}</span><span class="tooltip">News Links & Refs Coming Soon</span>`;
+                        rightCard.onmouseenter = playSound;
+                    }
+
+                    row.appendChild(leftCard);
+                    row.appendChild(dateLabel);
+                    row.appendChild(rightCard);
+                    timelineContainer.appendChild(row);
+                    
+                    currentEventCounter--;
+                }
+            });
+
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function showLanding() {
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('landing-page').style.display = 'flex';
+        }
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        
+        const particlesArray = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = Math.random() * -1 - 0.5;
+            }
+            update() {
+                this.y += this.speedY;
+                if(this.y < 0) {
+                    this.y = canvas.height;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.fillStyle = document.body.classList.contains('dark-mode') ? 'rgba(0, 255, 204, 0.5)' : 'rgba(0, 0, 0, 0.2)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for(let i = 0; i < 50; i++) particlesArray.push(new Particle());
+
+        function animate() {
+            if(document.getElementById('main-content').style.display === 'block') {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particlesArray.forEach(p => { p.update(); p.draw(); });
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+    </script>
+</body>
+</html>"""
+
+file_name = "Escalation_Ladder_Version_V1 Beta.md"
+with open(file_name, "w", encoding="utf-8") as f:
+    f.write("```html\n" + final_code + "\n```\n")
