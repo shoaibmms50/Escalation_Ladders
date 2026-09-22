@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+final_code = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -345,11 +345,30 @@
             box-shadow: 0 4px 15px rgba(255, 204, 0, 0.5);
             border: 2px solid #333;
         }
+        .checkpoint.history-checkpoint {
+            background: #e0e0e0;
+            border-color: #999;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        body.dark-mode .checkpoint.history-checkpoint {
+            background: #333;
+            color: #eee;
+            border-color: #555;
+        }
+
         .checkpoint-days {
             font-size: 0.8rem;
             font-weight: 700;
             margin-top: 5px;
             color: #333;
+        }
+        body.dark-mode .checkpoint.history-checkpoint .checkpoint-days, 
+        .checkpoint.history-checkpoint a {
+            color: #555;
+        }
+        body.dark-mode .checkpoint.history-checkpoint a {
+            color: #ccc;
         }
 
         .card {
@@ -476,7 +495,7 @@
     <div id="landing-page">
         <h1>Select Conflict Zone</h1>
         <button class="conflict-btn btn-us-iran" onclick="loadConflict('US_IRAN')">USA vs IRAN</button>
-        <button class="conflict-btn btn-saudi-houthi" onclick="loadConflict('SAUDI_HOUTHI')">SAUDI vs HOUTHIS</button>
+        <button class="conflict-btn btn-saudi-houthi" onclick="loadConflict('SAUDI_HOUTHI')">SAUDI vs ANSAR ALLAH (HOUTHIS)</button>
     </div>
 
     <!-- Main Timeline Content -->
@@ -655,7 +674,7 @@
             },
             'SAUDI_HOUTHI': {
                 nameLeft: "SAUDI ARABIA",
-                nameRight: "HOUTHIS",
+                nameRight: "ANSAR ALLAH (HOUTHIS)",
                 flagLeft: "url('https://upload.wikimedia.org/wikipedia/commons/0/0d/Flag_of_Saudi_Arabia.svg')",
                 flagRight: "url('https://upload.wikimedia.org/wikipedia/commons/8/89/Flag_of_Yemen.svg')", 
                 startDateText: null, 
@@ -667,9 +686,23 @@
                 events: [
                     {
                         type: "event",
-                        date: "Placeholder Date",
-                        left: "Saudi Arabia placeholder event.",
-                        right: "Houthis placeholder event."
+                        date: "14-07-2026",
+                        left: "",
+                        right: "Retaliation.",
+                        rightRef: "https://www.bbc.com/news/articles/cwly5d9v7r43o",
+                        rightRefTitle: "BBC News: Retaliation"
+                    },
+                    {
+                        type: "event",
+                        date: "13-07-2026",
+                        left: "Yemen government attacks Sanaa airport, reviving dormant conflict.",
+                        leftRef: "https://www.thehindu.com/news/international/yemen-government-says-attacked-sanaa-airport-reviving-dormant-conflict/article71218767.ece",
+                        leftRefTitle: "Sanaa Airport Attacked",
+                        right: ""
+                    },
+                    {
+                        type: "history",
+                        text: "PRETEXT: Peace and National Partnership Agreement (21 Sep 2014) <br><a href='https://peacemaker.un.org/en/node/8834' target='_blank' style='font-size:0.75rem; text-decoration:underline;'>Source Document</a>"
                     }
                 ]
             }
@@ -772,6 +805,17 @@
                     `;
                     timelineContainer.appendChild(row);
 
+                } else if (evt.type === 'history') {
+                    const row = document.createElement('div');
+                    row.className = 'checkpoint-container';
+                    
+                    row.innerHTML = `
+                        <div class="checkpoint history-checkpoint">
+                            ${evt.text}
+                        </div>
+                    `;
+                    timelineContainer.appendChild(row);
+
                 } else if (evt.type === 'event') {
                     const row = document.createElement('div');
                     row.className = 'event-container';
@@ -780,8 +824,7 @@
                     const hasLeftText = evt.left && evt.left.trim() !== "";
                     leftCard.className = `card left-card ${!hasLeftText ? 'blank' : ''}`;
                     if(hasLeftText) {
-                        let leftRefTitle = evt.leftRefTitle || 'Source Article';
-                        let leftRefHtml = evt.leftRef ? `<a href="${evt.leftRef}" target="_blank">${leftRefTitle}</a>` : 'News Links & Refs Coming Soon';
+                        let leftRefHtml = evt.leftRef ? `<a href="${evt.leftRef}" target="_blank">${evt.leftRefTitle || 'Source Article'}</a>` : 'News Links & Refs Coming Soon';
                         leftCard.innerHTML = `<p>${evt.left}</p><span class="event-id">${leftPrefix}.${leftCount}</span><span class="tooltip">${leftRefHtml}</span>`;
                         leftCard.onmouseenter = playSound;
                         leftCount--;
@@ -795,8 +838,7 @@
                     const hasRightText = evt.right && evt.right.trim() !== "";
                     rightCard.className = `card right-card ${!hasRightText ? 'blank' : ''}`;
                     if(hasRightText) {
-                        let rightRefTitle = evt.rightRefTitle || 'Source Article';
-                        let rightRefHtml = evt.rightRef ? `<a href="${evt.rightRef}" target="_blank">${rightRefTitle}</a>` : 'News Links & Refs Coming Soon';
+                        let rightRefHtml = evt.rightRef ? `<a href="${evt.rightRef}" target="_blank">${evt.rightRefTitle || 'Source Article'}</a>` : 'News Links & Refs Coming Soon';
                         rightCard.innerHTML = `<p>${evt.right}</p><span class="event-id">${rightPrefix}.${rightCount}</span><span class="tooltip">${rightRefHtml}</span>`;
                         rightCard.onmouseenter = playSound;
                         rightCount--;
@@ -870,3 +912,8 @@
     </script>
 </body>
 </html>
+"""
+
+with open("Escalation_Ladder_Version_V1 Beta.md", "w", encoding="utf-8") as f:
+    f.write("```html\n" + final_code + "\n```\n")
+print("Escalation_Ladder_Version_V1 Beta.md")
