@@ -1,4 +1,4 @@
-final_code = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -141,7 +141,7 @@ final_code = """<!DOCTYPE html>
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             font-size: 0.7rem;
-            max-width: 220px;
+            max-width: 230px;
             display: none; 
         }
         body.dark-mode #info-panel {
@@ -173,7 +173,6 @@ final_code = """<!DOCTYPE html>
             color: #00ffcc;
         }
 
-        /* Tooltip fix: zero dead-zone & invisible hover-bridge pseudo element */
         .info-tooltip {
             visibility: hidden;
             position: absolute;
@@ -197,7 +196,6 @@ final_code = """<!DOCTYPE html>
             transition: opacity 0.2s ease, visibility 0.2s ease;
         }
 
-        /* Invisible bridge connecting button directly to tooltip */
         .info-tooltip::before {
             content: '';
             position: absolute;
@@ -208,7 +206,6 @@ final_code = """<!DOCTYPE html>
             background: transparent;
         }
 
-        /* Show on hover OR when pinned/active */
         .info-button-container:hover .info-tooltip,
         .info-button-container.pinned .info-tooltip {
             visibility: visible;
@@ -219,31 +216,47 @@ final_code = """<!DOCTYPE html>
         /* --- Playing Cards Decks (Unstacked Flex) --- */
         .deck-left, .deck-right {
             position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 140px; 
+            top: 210px; 
+            bottom: 20px; 
+            width: 110px; 
             z-index: 150;
             display: flex;
             flex-direction: column;
-            gap: 15px; 
-            max-height: 90vh;
+            gap: 10px; 
             overflow-y: auto;
         }
         .deck-left::-webkit-scrollbar, .deck-right::-webkit-scrollbar { display: none; }
         .deck-left { left: 20px; }
         .deck-right { right: 20px; }
 
+        .deck-heading {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 900;
+            color: var(--text-color);
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px;
+            border-radius: 6px;
+            border: 2px solid #ccc;
+        }
+        body.dark-mode .deck-heading {
+            background: rgba(30, 30, 30, 0.9);
+            color: #fff;
+            border-color: #555;
+        }
+
         .playing-card {
             position: relative; 
             width: 100%;
-            min-height: 90px;
+            min-height: 60px; 
             background: #fff;
             color: #111;
             border-radius: 6px;
-            padding: 12px;
+            padding: 8px; 
             box-sizing: border-box;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            font-size: 0.75rem;
+            font-size: 0.65rem; 
             font-weight: 900;
             text-align: center;
             display: flex;
@@ -251,7 +264,7 @@ final_code = """<!DOCTYPE html>
             justify-content: center;
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
             cursor: pointer;
-            border: 4px solid #ccc;
+            border: 3px solid #ccc; 
         }
         
         .left-playing-card { border-color: red; }
@@ -380,6 +393,7 @@ final_code = """<!DOCTYPE html>
         .left-card .event-id { right: 8px; }
         .right-card .event-id { left: 8px; }
         
+        /* Improved Timeline Tooltip for Clickability */
         .tooltip {
             visibility: hidden;
             background-color: #333;
@@ -388,8 +402,8 @@ final_code = """<!DOCTYPE html>
             border-radius: 6px;
             padding: 10px;
             position: absolute;
-            z-index: 1;
-            bottom: 125%; 
+            z-index: 150;
+            bottom: calc(100% + 10px); 
             left: 50%;
             transform: translateX(-50%);
             opacity: 0;
@@ -397,11 +411,26 @@ final_code = """<!DOCTYPE html>
             width: 200px;
             font-size: 0.8rem;
             font-weight: 400; 
+            pointer-events: none;
+        }
+        .tooltip a {
+            color: #00ffcc;
+            text-decoration: underline;
+        }
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: transparent;
         }
 
         .card:hover:not(.blank) .tooltip {
             visibility: visible;
             opacity: 1;
+            pointer-events: auto; 
         }
 
         .left-card {
@@ -470,7 +499,7 @@ final_code = """<!DOCTYPE html>
             <div class="info-line" id="info-days-count"></div>
             
             <div class="info-button-container" id="mou-container" style="display:none;">
-                <div class="info-button" onclick="togglePin('mou-container')">14 Points of June MOU</div>
+                <div class="info-button" onclick="togglePin('mou-container')">14 Points of June MOU (17 June 2026)</div>
                 <div class="info-tooltip" id="mou-tooltip"></div>
             </div>
 
@@ -516,12 +545,10 @@ final_code = """<!DOCTYPE html>
             return Math.floor(diffTime / (1000 * 60 * 60 * 24));
         }
 
-        // Toggle Click-to-Pin so user can also click and freely scroll without losing tooltip
         function togglePin(containerId) {
             const container = document.getElementById(containerId);
             const isPinned = container.classList.contains('pinned');
             
-            // Close any other pinned container
             document.querySelectorAll('.info-button-container').forEach(c => c.classList.remove('pinned'));
             
             if (!isPinned) {
@@ -529,7 +556,6 @@ final_code = """<!DOCTYPE html>
             }
         }
 
-        // Close pinned tooltips if clicked outside
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.info-button-container')) {
                 document.querySelectorAll('.info-button-container').forEach(c => c.classList.remove('pinned'));
@@ -544,7 +570,7 @@ final_code = """<!DOCTYPE html>
                 flagRight: "url('https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Iran.svg')",
                 startDateText: "Conflict Started: February 28, 2026",
                 startDateObj: "2026-02-28",
-                mouContent: `<strong>14 Points of the June MOU</strong><br><br>
+                mouContent: `<strong>14 Points of the June MOU (17 June 2026)</strong><br><br>
                 1. Ceasing hostilities “on all fronts”.<br><br>
                 2. Respect for sovereignty, territorial integrity and internal affairs.<br><br>
                 3. Negotiating a final deal within 60 days.<br><br>
@@ -569,6 +595,7 @@ final_code = """<!DOCTYPE html>
                 7. Compensation for the damage inflicted on Iran, and a commitment not to interfere with Iran’s nuclear and missile capabilities. Payment for wartime damages (some earlier Iranian statements have referenced figures as high as ~$300 billion in related contexts) plus a pledge of non-interference in Iran’s nuclear program and missile capabilities.<br><br>
                 Source: Mohsen Rezaei on X`,
                 cardsLeft: [
+                    "They can use tactical nukes on Iran",
                     "Destroy pickaxe mountain",
                     "Restart military strikes",
                     "Make a deal",
@@ -583,8 +610,24 @@ final_code = """<!DOCTYPE html>
                 events: [
                     {
                         type: "checkpoint",
-                        text: "KEY CHECKPOINT: US Midterm Elections",
+                        text: "KEY CHECKPOINT: US Midterm Elections (NOV 3 2026)",
                         dateObj: midtermElectionDate
+                    },
+                    {
+                        type: "event",
+                        date: "22-09-2026",
+                        left: "", 
+                        right: "NPT withdrawal bill submitted to parliament.",
+                        rightRef: "https://en.mehrnews.com/news/247902/NPT-withdrawal-bill-submitted-to-parliament-presiding-board",
+                        rightRefTitle: "NPT Withdrawal Bill Submitted"
+                    },
+                    {
+                        type: "event",
+                        date: "21-09-2026",
+                        left: "US Treasury Secretary Scott Bessent announces all Iranian flights are banned. Any country assisting them with tickets, fuel, etc., will be taken off of the US dollar system.",
+                        leftRef: "https://www.fortuneindia.com/world/bessents-shut-down-ultimatum-to-irans-airlines-has-an-india-footnote-but-its-an-old-one/160442",
+                        leftRefTitle: "Bessent's Ultimatum to Iran Airlines",
+                        right: "" 
                     },
                     {
                         type: "event",
@@ -602,7 +645,11 @@ final_code = """<!DOCTYPE html>
                         type: "event",
                         date: "18-09-2026",
                         left: "Trump issued warning to embassies of all gulf countries tpo be alert because hes going to take a major decision. A. Strike, B. Economic pressure, C. Deal.",
-                        right: "Iran deploys around 450k troops to its borders."
+                        leftRef: "https://www.cbsnews.com/live-updates/iran-war-trump-us-strait-of-hormuz-oil-houthis/",
+                        leftRefTitle: "US-Iran Conflict Live Updates",
+                        right: "Iran deploys around 450k troops to its borders.",
+                        rightRef: "https://www.freepressjournal.in/world/iran-deploys-420000-strong-army-along-borders-amid-possible-us-ground-invasion",
+                        rightRefTitle: "Iran Deploys 420K Army Along Borders"
                     }
                 ]
             },
@@ -650,9 +697,9 @@ final_code = """<!DOCTYPE html>
             osc.stop(audioCtx.currentTime + 0.1);
         }
 
-        function renderDeck(container, cardsData, isLeft) {
+        function renderDeck(container, cardsData, isLeft, countryName) {
             container.innerHTML = ''; 
-            cardsData.forEach((cardText, index) => {
+            cardsData.forEach((cardText) => {
                 const card = document.createElement('div');
                 card.className = `playing-card ${isLeft ? 'left-playing-card' : 'right-playing-card'}`;
                 card.innerText = cardText;
@@ -663,6 +710,13 @@ final_code = """<!DOCTYPE html>
 
                 container.appendChild(card);
             });
+            
+            if (cardsData.length > 0) {
+                const heading = document.createElement('div');
+                heading.className = 'deck-heading';
+                heading.innerText = `Available cards with ${countryName}`;
+                container.appendChild(heading);
+            }
         }
 
         function loadConflict(zoneId) {
@@ -676,8 +730,8 @@ final_code = """<!DOCTYPE html>
             document.getElementById('bg-left').style.backgroundImage = data.flagLeft;
             document.getElementById('bg-right').style.backgroundImage = data.flagRight;
 
-            renderDeck(deckLeftContainer, data.cardsLeft, true);
-            renderDeck(deckRightContainer, data.cardsRight, false);
+            renderDeck(deckLeftContainer, data.cardsLeft, true, data.nameLeft);
+            renderDeck(deckRightContainer, data.cardsRight, false, data.nameRight);
 
             if(data.startDateText) {
                 infoPanel.style.display = 'block';
@@ -699,8 +753,8 @@ final_code = """<!DOCTYPE html>
 
             timelineContainer.innerHTML = '<div class="trunk"></div>';
 
-            const actualEventsCount = data.events.filter(e => e.type === 'event').length;
-            let currentEventCounter = actualEventsCount;
+            let leftCount = data.events.filter(e => e.type === 'event' && e.left && e.left.trim() !== "").length;
+            let rightCount = data.events.filter(e => e.type === 'event' && e.right && e.right.trim() !== "").length;
 
             data.events.forEach((evt) => {
                 if (evt.type === 'checkpoint') {
@@ -723,10 +777,14 @@ final_code = """<!DOCTYPE html>
                     row.className = 'event-container';
                     
                     const leftCard = document.createElement('div');
-                    leftCard.className = `card left-card ${!evt.left ? 'blank' : ''}`;
-                    if(evt.left) {
-                        leftCard.innerHTML = `<p>${evt.left}</p><span class="event-id">${leftPrefix}.${currentEventCounter}</span><span class="tooltip">News Links & Refs Coming Soon</span>`;
+                    const hasLeftText = evt.left && evt.left.trim() !== "";
+                    leftCard.className = `card left-card ${!hasLeftText ? 'blank' : ''}`;
+                    if(hasLeftText) {
+                        let leftRefTitle = evt.leftRefTitle || 'Source Article';
+                        let leftRefHtml = evt.leftRef ? `<a href="${evt.leftRef}" target="_blank">${leftRefTitle}</a>` : 'News Links & Refs Coming Soon';
+                        leftCard.innerHTML = `<p>${evt.left}</p><span class="event-id">${leftPrefix}.${leftCount}</span><span class="tooltip">${leftRefHtml}</span>`;
                         leftCard.onmouseenter = playSound;
+                        leftCount--;
                     }
 
                     const dateLabel = document.createElement('div');
@@ -734,18 +792,20 @@ final_code = """<!DOCTYPE html>
                     dateLabel.innerText = evt.date;
 
                     const rightCard = document.createElement('div');
-                    rightCard.className = `card right-card ${!evt.right ? 'blank' : ''}`;
-                    if(evt.right) {
-                        rightCard.innerHTML = `<p>${evt.right}</p><span class="event-id">${rightPrefix}.${currentEventCounter}</span><span class="tooltip">News Links & Refs Coming Soon</span>`;
+                    const hasRightText = evt.right && evt.right.trim() !== "";
+                    rightCard.className = `card right-card ${!hasRightText ? 'blank' : ''}`;
+                    if(hasRightText) {
+                        let rightRefTitle = evt.rightRefTitle || 'Source Article';
+                        let rightRefHtml = evt.rightRef ? `<a href="${evt.rightRef}" target="_blank">${rightRefTitle}</a>` : 'News Links & Refs Coming Soon';
+                        rightCard.innerHTML = `<p>${evt.right}</p><span class="event-id">${rightPrefix}.${rightCount}</span><span class="tooltip">${rightRefHtml}</span>`;
                         rightCard.onmouseenter = playSound;
+                        rightCount--;
                     }
 
                     row.appendChild(leftCard);
                     row.appendChild(dateLabel);
                     row.appendChild(rightCard);
                     timelineContainer.appendChild(row);
-                    
-                    currentEventCounter--;
                 }
             });
 
@@ -809,8 +869,4 @@ final_code = """<!DOCTYPE html>
 
     </script>
 </body>
-</html>"""
-
-file_name = "Escalation_Ladder_Version_V1 Beta.md"
-with open(file_name, "w", encoding="utf-8") as f:
-    f.write("```html\n" + final_code + "\n```\n")
+</html>
