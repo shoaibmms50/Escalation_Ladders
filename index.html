@@ -1,4 +1,4 @@
-final_code = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -45,6 +45,7 @@ final_code = """<!DOCTYPE html>
             font-size: 3rem;
             margin-bottom: 2rem;
             color: var(--text-color);
+            text-align: center;
         }
 
         .conflict-btn {
@@ -213,7 +214,7 @@ final_code = """<!DOCTYPE html>
             pointer-events: auto;
         }
         
-        /* --- Playing Cards Decks (Unstacked Flex) --- */
+        /* --- Playing Cards Decks (Desktop Styles) --- */
         .deck-left, .deck-right {
             position: fixed;
             top: 210px; 
@@ -234,7 +235,7 @@ final_code = """<!DOCTYPE html>
             font-size: 0.75rem;
             font-weight: 900;
             color: var(--text-color);
-            margin-top: 15px;
+            margin-bottom: 10px;
             background: rgba(255, 255, 255, 0.8);
             padding: 8px;
             border-radius: 6px;
@@ -384,6 +385,16 @@ final_code = """<!DOCTYPE html>
             font-weight: 700;   
             font-size: 0.9rem;
         }
+        
+        /* Common Event Card */
+        .common-card {
+            width: 60%;
+            margin: 0 auto;
+            text-align: center;
+            border: 3px solid #888;
+            z-index: 15;
+        }
+
         .card.blank {
             background: transparent;
             box-shadow: none;
@@ -482,10 +493,102 @@ final_code = """<!DOCTYPE html>
             z-index: 100;
         }
 
+        /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 900px) {
-            .deck-left, .deck-right { display: none; } 
-            .container { padding: 180px 20px 50px 20px; }
-            .info-tooltip { width: 260px; }
+            .top-right-controls {
+                flex-direction: column;
+                gap: 5px;
+                top: 10px;
+                right: 10px;
+            }
+            .control-btn {
+                font-size: 0.7rem;
+                padding: 6px 10px;
+            }
+            #info-panel {
+                top: 10px;
+                left: 10px;
+                max-width: 180px;
+            }
+            .info-tooltip {
+                width: 85vw; /* Fit screen width */
+                font-size: 0.75rem;
+            }
+            
+            /* Reposition decks to be horizontally scrollable at the top of timeline */
+            .decks-wrapper {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                width: 100%;
+                padding-top: 150px; /* Clear fixed UI headers */
+                overflow: hidden;
+            }
+            .deck-left, .deck-right {
+                position: relative;
+                top: auto; left: auto; right: auto; bottom: auto;
+                transform: none;
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 5px 15px 15px 15px;
+                box-sizing: border-box;
+                max-height: none;
+                z-index: 150;
+            }
+            /* Reveal scrollbars for mobile cues */
+            .deck-left::-webkit-scrollbar, .deck-right::-webkit-scrollbar { display: block; height: 6px; }
+            .deck-left::-webkit-scrollbar-thumb, .deck-right::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
+            
+            .deck-heading {
+                writing-mode: vertical-rl;
+                transform: rotate(180deg);
+                margin: 0 15px 0 0;
+                font-size: 0.7rem;
+                padding: 10px;
+                flex-shrink: 0;
+            }
+            .playing-card {
+                min-width: 110px;
+                min-height: 80px;
+                margin-right: 10px;
+                flex-shrink: 0;
+            }
+            .left-playing-card:hover, .right-playing-card:hover {
+                transform: scale(1.1) translateY(-10px);
+            }
+
+            .container {
+                padding: 40px 10px 50px 10px; 
+                max-width: 100%;
+            }
+            .card {
+                width: 43%;
+                padding: 12px;
+                font-size: 0.75rem;
+            }
+            .common-card {
+                width: 85%;
+            }
+            .date {
+                font-size: 0.6rem;
+                padding: 4px 6px;
+            }
+            .checkpoint {
+                font-size: 0.8rem;
+                padding: 8px 12px;
+            }
+            .footer {
+                font-size: 1.8rem;
+                padding: 30px 15px;
+            }
+            #landing-page h1 {
+                font-size: 2rem;
+            }
+            .conflict-btn {
+                font-size: 1.2rem;
+                padding: 12px 25px;
+            }
         }
     </style>
 </head>
@@ -530,10 +633,13 @@ final_code = """<!DOCTYPE html>
         
         <canvas id="particles"></canvas>
 
-        <!-- Playing Cards Deck Left -->
-        <div class="deck-left" id="deck-left"></div>
-        <!-- Playing Cards Deck Right -->
-        <div class="deck-right" id="deck-right"></div>
+        <!-- Playing Cards Decks Wrapper (Used for mobile flow) -->
+        <div class="decks-wrapper">
+            <!-- Playing Cards Deck Left -->
+            <div class="deck-left" id="deck-left"></div>
+            <!-- Playing Cards Deck Right -->
+            <div class="deck-right" id="deck-right"></div>
+        </div>
 
         <div class="container" id="timeline">
             <div class="trunk"></div>
@@ -631,6 +737,45 @@ final_code = """<!DOCTYPE html>
                         type: "checkpoint",
                         text: "KEY CHECKPOINT: US Midterm Elections (NOV 3 2026)",
                         dateObj: midtermElectionDate
+                    },
+                    {
+                        type: "event",
+                        date: "27-09-2026",
+                        left: "",
+                        right: "Iran warns US allies against new attack, threatens retaliation.",
+                        rightRef: "https://timesofindia.indiatimes.com/world/middle-east/iran-warns-us-allies-against-new-attack-threatens-retaliation/articleshow/134374995.cms",
+                        rightRefTitle: "Iran Warns US Allies"
+                    },
+                    {
+                        type: "event",
+                        date: "26-09-2026",
+                        left: "Trump rejects the 7 day proposal by IRAN.",
+                        leftRef: "https://www.bbc.com/news/articles/cqgmrr9ekr7ko",
+                        leftRefTitle: "Trump Rejects 7-Day Plan",
+                        right: ""
+                    },
+                    {
+                        type: "common",
+                        date: "25-09-2026",
+                        text: "Iran's Araqchi says now up to US to accept 7-day plan.",
+                        ref: "https://www.reuters.com/world/middle-east/irans-araqchi-says-now-up-us-accept-7-day-plan-2026-09-25/",
+                        refTitle: "Araqchi: Up to US to accept 7-day plan"
+                    },
+                    {
+                        type: "event",
+                        date: "24-09-2026",
+                        left: "",
+                        right: "Iran's president tells Trump it will never 'bend the knee'.",
+                        rightRef: "https://www.bbc.com/news/articles/cqvgyjy23ggjo",
+                        rightRefTitle: "Iran President: Won't Bend the Knee"
+                    },
+                    {
+                        type: "event",
+                        date: "23-09-2026",
+                        left: "Trump threatens to annihilate IRAN.",
+                        leftRef: "https://www.bbc.com/news/articles/c52e0ywl9pr7o",
+                        leftRefTitle: "Trump Threatens to Annihilate Iran",
+                        right: ""
                     },
                     {
                         type: "event",
@@ -732,6 +877,14 @@ final_code = """<!DOCTYPE html>
 
         function renderDeck(container, cardsData, isLeft, countryName) {
             container.innerHTML = ''; 
+            
+            if (cardsData.length > 0) {
+                const heading = document.createElement('div');
+                heading.className = 'deck-heading';
+                heading.innerText = `Available cards with ${countryName}`;
+                container.appendChild(heading);
+            }
+            
             cardsData.forEach((cardText) => {
                 const card = document.createElement('div');
                 card.className = `playing-card ${isLeft ? 'left-playing-card' : 'right-playing-card'}`;
@@ -743,13 +896,6 @@ final_code = """<!DOCTYPE html>
 
                 container.appendChild(card);
             });
-            
-            if (cardsData.length > 0) {
-                const heading = document.createElement('div');
-                heading.className = 'deck-heading';
-                heading.innerText = `Available cards with ${countryName}`;
-                container.appendChild(heading);
-            }
         }
 
         function loadConflict(zoneId) {
@@ -814,6 +960,21 @@ final_code = """<!DOCTYPE html>
                             ${evt.text}
                         </div>
                     `;
+                    timelineContainer.appendChild(row);
+
+                } else if (evt.type === 'common') {
+                    const row = document.createElement('div');
+                    row.className = 'checkpoint-container'; 
+                    
+                    const commonCard = document.createElement('div');
+                    commonCard.className = 'card common-card';
+                    
+                    let refHtml = evt.ref ? `<a href="${evt.ref}" target="_blank">${evt.refTitle || 'Source Article'}</a>` : 'News Links & Refs Coming Soon';
+                    
+                    commonCard.innerHTML = `<div style="font-size:0.7rem; color:#555; margin-bottom:10px; font-weight:bold;">${evt.date}</div><p>${evt.text}</p><span class="tooltip">${refHtml}</span>`;
+                    commonCard.onmouseenter = playSound;
+
+                    row.appendChild(commonCard);
                     timelineContainer.appendChild(row);
 
                 } else if (evt.type === 'event') {
@@ -912,8 +1073,3 @@ final_code = """<!DOCTYPE html>
     </script>
 </body>
 </html>
-"""
-
-with open("Escalation_Ladder_Version_V1 Beta.md", "w", encoding="utf-8") as f:
-    f.write("```html\n" + final_code + "\n```\n")
-print("Escalation_Ladder_Version_V1 Beta.md")
