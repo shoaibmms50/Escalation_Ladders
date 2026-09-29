@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>The Escalation Project</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap');
         
         :root {
             --bg-color: #f0f4f8;
-            --text-color: #000;
+            --text-color: #111;
             --trunk-color: #333;
         }
         
         body.dark-mode {
             --bg-color: #121212;
-            --text-color: #000; 
+            --text-color: #eee; 
             --trunk-color: #00ffcc;
         }
 
@@ -25,7 +25,7 @@
             font-family: 'Montserrat', sans-serif;
             background-color: var(--bg-color);
             overflow-x: hidden;
-            transition: background-color 0.5s ease;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
         /* --- Landing Page Styles --- */
@@ -67,583 +67,371 @@
         
         .conflict-btn:hover { transform: scale(1.05); }
 
-        body.dark-mode #landing-page {
-            background-color: #121212;
-        }
-        body.dark-mode #landing-page h1 {
-            color: #fff;
-        }
-
         /* --- Main Timeline Styles --- */
-        #main-content {
-            display: none;
-        }
+        #main-content { display: none; }
 
-        /* Giant Translucent Flags Background Split Down the Middle */
         .bg-flags {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -2;
-            display: flex;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -2; display: flex; pointer-events: none;
         }
-        .bg-left {
-            width: 50%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0.15;
-            transition: opacity 0.5s;
+        .bg-left, .bg-right {
+            width: 50%; height: 100%;
+            background-size: cover; background-position: center;
+            opacity: 0.15; transition: opacity 0.5s;
         }
-        .bg-right {
-            width: 50%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0.15;
-            transition: opacity 0.5s;
-        }
-        body.dark-mode .bg-left, body.dark-mode .bg-right {
-            opacity: 0.05;
-        }
+        body.dark-mode .bg-left, body.dark-mode .bg-right { opacity: 0.05; }
 
         /* Buttons Top Right */
         .top-right-controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 200;
-            display: flex;
-            gap: 15px;
+            position: fixed; top: 20px; right: 20px; z-index: 200;
+            display: flex; align-items: center; gap: 15px;
         }
+        
+        .last-updated {
+            font-size: 0.75rem; font-weight: 700; color: #333;
+            background: rgba(255, 255, 255, 0.8); padding: 6px 12px;
+            border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        body.dark-mode .last-updated {
+            color: #eee; background: rgba(40, 40, 40, 0.8);
+        }
+
         .control-btn {
-            padding: 8px 16px;
-            background: #333;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: bold;
-            font-size: 0.8rem;
+            padding: 8px 16px; background: #333; color: #fff; border: none;
+            border-radius: 5px; cursor: pointer; font-family: inherit;
+            font-weight: bold; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         /* Top Left Info Panel */
         #info-panel {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 250;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            font-size: 0.7rem;
-            max-width: 230px;
-            display: none; 
+            position: fixed; top: 20px; left: 20px; z-index: 250;
+            background: rgba(255, 255, 255, 0.95); padding: 12px;
+            border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-size: 0.75rem; max-width: 250px; display: none; color: #111;
         }
-        body.dark-mode #info-panel {
-            background: rgba(30, 30, 30, 0.95);
-            color: #fff;
-        }
-        .info-line {
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
-        .info-button-container {
-            position: relative;
-            margin-top: 8px;
-        }
+        body.dark-mode #info-panel { background: rgba(30, 30, 30, 0.95); color: #fff; }
+        .info-line { margin-bottom: 5px; font-weight: 700; }
+        
+        .info-button-container { position: relative; margin-top: 8px; }
         .info-button {
-            background: #444;
-            color: #fff;
-            padding: 6px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            text-align: center;
-            font-weight: bold;
-            user-select: none;
+            background: #444; color: #fff; padding: 6px 8px; border-radius: 4px;
+            cursor: pointer; text-align: center; font-weight: bold; user-select: none;
             transition: background-color 0.2s;
         }
-        .info-button:hover, .info-button.active {
-            background: #222;
-            color: #00ffcc;
+        .info-button:hover, .info-button-container.pinned .info-button {
+            background: #222; color: #00ffcc;
         }
 
         .info-tooltip {
-            visibility: hidden;
-            position: absolute;
-            top: calc(100% + 4px);
-            left: 0;
-            background: #1e1e1e;
-            color: #fff;
-            padding: 16px 18px;
-            border-radius: 8px;
-            width: 360px;
-            max-height: 55vh;
-            overflow-y: auto;
-            font-size: 0.8rem;
-            font-weight: normal;
-            line-height: 1.5;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-            border: 1px solid #444;
-            z-index: 400;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease, visibility 0.2s ease;
+            visibility: hidden; position: absolute; top: calc(100% + 4px); left: 0;
+            background: #1e1e1e; color: #fff; padding: 16px 18px; border-radius: 8px;
+            width: 360px; max-height: 55vh; overflow-y: auto; font-size: 0.8rem;
+            line-height: 1.5; box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            border: 1px solid #444; z-index: 400; opacity: 0; transition: 0.2s ease;
         }
-
         .info-tooltip::before {
-            content: '';
-            position: absolute;
-            top: -12px;
-            left: 0;
-            width: 100%;
-            height: 16px;
-            background: transparent;
+            content: ''; position: absolute; top: -12px; left: 0; width: 100%; height: 16px; background: transparent;
         }
-
         .info-button-container:hover .info-tooltip,
         .info-button-container.pinned .info-tooltip {
-            visibility: visible;
-            opacity: 1;
-            pointer-events: auto;
+            visibility: visible; opacity: 1; pointer-events: auto;
         }
         
-        /* --- Playing Cards Decks (Desktop Styles) --- */
-        .decks-wrapper {
-            /* Handled individually on desktop via fixed positions below */
-        }
+        /* --- MODERNIZED Playing Cards Decks --- */
+        .decks-wrapper {}
         .deck-left, .deck-right {
-            position: fixed;
-            top: 210px; 
-            bottom: 20px; 
-            width: 110px; 
-            z-index: 150;
-            display: flex;
-            flex-direction: column;
-            gap: 10px; 
-            overflow-y: auto;
+            position: fixed; top: 210px; bottom: 20px; width: 130px; 
+            z-index: 150; display: flex; flex-direction: column; gap: 12px; overflow-y: auto;
         }
         .deck-left::-webkit-scrollbar, .deck-right::-webkit-scrollbar { display: none; }
         .deck-left { left: 20px; }
         .deck-right { right: 20px; }
 
         .deck-heading {
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 900;
-            color: var(--text-color);
-            margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 8px;
-            border-radius: 6px;
-            border: 2px solid #ccc;
+            text-align: center; font-size: 0.75rem; font-weight: 900;
+            color: var(--text-color); margin-bottom: 10px; background: rgba(255, 255, 255, 0.8);
+            padding: 8px; border-radius: 6px; border: 2px solid #ccc;
         }
-        body.dark-mode .deck-heading {
-            background: rgba(30, 30, 30, 0.9);
-            color: #fff;
-            border-color: #555;
-        }
+        body.dark-mode .deck-heading { background: rgba(30, 30, 30, 0.9); border-color: #555; }
 
         .playing-card {
-            position: relative; 
-            width: 100%;
-            min-height: 60px; 
-            background: #fff;
-            color: #111;
-            border-radius: 6px;
-            padding: 8px; 
-            box-sizing: border-box;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            font-size: 0.65rem; 
-            font-weight: 900;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
-            cursor: pointer;
-            border: 3px solid #ccc; 
+            position: relative; width: 100%; min-height: 60px; 
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            color: #111; border-radius: 8px; padding: 10px; box-sizing: border-box;
+            box-shadow: 4px 4px 10px rgba(0,0,0,0.1), -4px -4px 10px rgba(255,255,255,0.8);
+            font-size: 0.65rem; font-weight: 700; text-align: center;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid rgba(200, 200, 200, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; 
+        }
+        body.dark-mode .playing-card {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a); color: #f0f0f0;
+            box-shadow: 4px 4px 10px rgba(0,0,0,0.6), -4px -4px 10px rgba(60,60,60,0.3);
+            border-color: rgba(60, 60, 60, 0.5); 
         }
         
-        .left-playing-card { border-color: red; }
-        .left-playing-card:hover {
-            transform: scale(1.15) translateX(10px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            z-index: 200;
+        .left-playing-card { border-left: 8px solid #ff3333; }
+        body.dark-mode .left-playing-card { border-left-color: #ff3333; }
+        .left-playing-card:hover { 
+            transform: scale(1.15) translateX(12px); border: 4px solid #ff3333 !important; 
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.8), inset 0 0 15px rgba(255, 51, 51, 0.2);
+            background: #fffafa; z-index: 200;
         }
         
-        .right-playing-card { border-color: blue; }
-        .right-playing-card:hover {
-            transform: scale(1.15) translateX(-10px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            z-index: 200;
+        .right-playing-card { border-right: 8px solid #3366ff; } 
+        body.dark-mode .right-playing-card { border-right-color: #3366ff; }
+        .right-playing-card:hover { 
+            transform: scale(1.15) translateX(-12px); border: 4px solid #3366ff !important;
+            box-shadow: 0 0 30px rgba(51, 102, 255, 0.8), inset 0 0 15px rgba(51, 102, 255, 0.2);
+            background: #fafcff; z-index: 200;
         }
+        
+        body.dark-mode .left-playing-card:hover { background: #2b1111; }
+        body.dark-mode .right-playing-card:hover { background: #111a2b; }
+        
+        .playing-card::after {
+            content: '👁 View Media'; position: absolute; bottom: -10px; right: 5px;
+            font-size: 0.5rem; background: #333; color: #fff; padding: 3px 6px;
+            border-radius: 4px; opacity: 0; transition: opacity 0.2s; white-space: nowrap;
+        }
+        .playing-card:hover::after { opacity: 1; }
 
         /* --- Timeline & Events --- */
         .container {
-            position: relative;
-            max-width: 900px;
-            margin: 0 auto;
+            position: relative; max-width: 900px; margin: 0 auto;
             padding: 220px 180px 50px 180px; 
         }
-
         .trunk {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 100px;
-            width: 6px;
-            background-color: var(--trunk-color);
-            transform: translateX(-50%);
+            position: absolute; left: 50%; top: 0; bottom: 100px; width: 6px;
+            background-color: var(--trunk-color); transform: translateX(-50%);
             box-shadow: 0 0 15px var(--trunk-color);
         }
 
         .event-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 80px;
-            position: relative;
-            width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 80px; position: relative; width: 100%;
         }
 
         .date {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #222; 
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #fff; 
-            z-index: 10;
-            border: 1px solid #555;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: absolute; left: 50%; transform: translateX(-50%);
+            background: #222; padding: 4px 10px; border-radius: 12px;
+            font-size: 0.7rem; font-weight: 700; color: #fff; z-index: 10;
+            border: 1px solid #555; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             white-space: nowrap;
         }
 
-        /* Checkpoint Styling */
         .checkpoint-container {
-            margin-bottom: 80px;
-            position: relative;
-            width: 100%;
-            display: flex;
-            justify-content: center;
+            margin-bottom: 80px; position: relative; width: 100%;
+            display: flex; justify-content: center;
         }
-        
         .checkpoint {
-            background: #ffcc00;
-            color: #000;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 900;
-            text-align: center;
-            z-index: 10;
-            box-shadow: 0 4px 15px rgba(255, 204, 0, 0.5);
-            border: 2px solid #333;
+            background: #ffcc00; color: #000; padding: 10px 20px; border-radius: 8px;
+            font-weight: 900; text-align: center; z-index: 10;
+            box-shadow: 0 4px 15px rgba(255, 204, 0, 0.5); border: 2px solid #333;
         }
         .checkpoint.history-checkpoint {
-            background: #e0e0e0;
-            border-color: #999;
-            color: #333;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: #e0e0e0; border-color: #999; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        body.dark-mode .checkpoint.history-checkpoint {
-            background: #333;
-            color: #eee;
-            border-color: #555;
-        }
-
-        .checkpoint-days {
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-top: 5px;
-            color: #333;
-        }
+        body.dark-mode .checkpoint.history-checkpoint { background: #333; color: #eee; border-color: #555; }
+        .checkpoint-days { font-size: 0.8rem; font-weight: 700; margin-top: 5px; color: #333; }
         body.dark-mode .checkpoint.history-checkpoint .checkpoint-days, 
-        .checkpoint.history-checkpoint a {
-            color: #555;
-        }
-        body.dark-mode .checkpoint.history-checkpoint a {
-            color: #ccc;
-        }
+        .checkpoint.history-checkpoint a { color: #555; }
+        body.dark-mode .checkpoint.history-checkpoint a { color: #ccc; }
 
         .card {
-            width: 42%;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.95);
-            color: var(--text-color);
-            position: relative;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            border-radius: 8px; 
-            font-weight: 700;   
-            font-size: 0.9rem;
+            width: 42%; padding: 25px; background: rgba(255, 255, 255, 0.95);
+            color: var(--text-color); position: relative; cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: transform 0.3s ease;
+            border-radius: 8px; font-weight: 700; font-size: 0.9rem;
         }
+        body.dark-mode .card { background: rgba(30, 30, 30, 0.95); color: #fff; }
         
-        /* Common Event Card */
-        .common-card {
-            width: 60%;
-            margin: 0 auto;
-            text-align: center;
-            border: 3px solid #888;
-            z-index: 15;
-        }
-
-        .card.blank {
-            background: transparent;
-            box-shadow: none;
-            border: 2px dashed rgba(150,150,150,0.5);
-            cursor: default;
-        }
-        .card.blank:hover {
-            transform: none;
-        }
-
-        .card:hover:not(.blank) {
-            transform: scale(1.05);
-        }
+        .common-card { width: 60%; margin: 0 auto; text-align: center; border: 3px solid #888; z-index: 15; }
+        .card.blank { background: transparent; box-shadow: none; border: 2px dashed rgba(150,150,150,0.5); cursor: default; }
+        .card:hover:not(.blank) { transform: scale(1.03); }
         
+        /* Interactive Score Button inside Timeline Cards */
+        .score-btn {
+            margin-top: 15px; background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.15);
+            padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 900;
+            color: #555; cursor: pointer; transition: all 0.2s; width: fit-content;
+            margin-left: auto; margin-right: auto; display: flex; align-items: center; justify-content: center;
+        }
+        body.dark-mode .score-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #ddd; }
+        .score-btn:hover { background: #00ffcc; color: #000; border-color: #00ffcc; transform: scale(1.05); }
+
         .event-id {
-            position: absolute;
-            bottom: 5px;
-            font-size: 0.65rem;
-            color: #777;
-            font-weight: 900;
-            opacity: 0.8;
-            background: rgba(0,0,0,0.05);
-            padding: 2px 6px;
-            border-radius: 4px;
+            position: absolute; bottom: 5px; font-size: 0.65rem; color: #777;
+            font-weight: 900; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;
         }
-        .left-card .event-id { right: 8px; }
-        .right-card .event-id { left: 8px; }
+        body.dark-mode .event-id { background: rgba(255,255,255,0.1); color: #ccc; }
+        .left-card .event-id { right: 8px; } .right-card .event-id { left: 8px; }
         
-        /* Improved Timeline Tooltip for Clickability */
         .tooltip {
-            visibility: hidden;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 10px;
-            position: absolute;
-            z-index: 150;
-            bottom: calc(100% + 10px); 
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            width: 200px;
-            font-size: 0.8rem;
-            font-weight: 400; 
-            pointer-events: none;
+            visibility: hidden; background-color: #333; color: #fff; text-align: center;
+            border-radius: 6px; padding: 10px; position: absolute; z-index: 150;
+            bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%);
+            opacity: 0; transition: opacity 0.3s; width: 200px; font-size: 0.8rem; font-weight: 400; pointer-events: none;
         }
-        .tooltip a {
-            color: #00ffcc;
-            text-decoration: underline;
-        }
-        .tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            height: 10px;
-            background: transparent;
-        }
+        .tooltip a { color: #00ffcc; text-decoration: underline; }
+        .tooltip::after { content: ''; position: absolute; top: 100%; left: 0; width: 100%; height: 10px; background: transparent; }
+        .card:hover:not(.blank) .tooltip { visibility: visible; opacity: 1; pointer-events: auto; }
 
-        .card:hover:not(.blank) .tooltip {
-            visibility: visible;
-            opacity: 1;
-            pointer-events: auto; 
-        }
+        .left-card { border: 2px solid rgba(255, 0, 0, 0.4); }
+        .right-card { margin-left: auto; border: 2px solid rgba(0, 0, 255, 0.4); }
 
-        .left-card {
-            border: 2px solid rgba(255, 0, 0, 0.4);
-        }
-
-        .right-card {
-            margin-left: auto;
-            border: 2px solid rgba(0, 0, 255, 0.4);
-        }
-
+        /* --- Footer Leverage Dashboard --- */
         .footer {
-            display: flex;
-            justify-content: space-between;
-            padding: 50px;
-            font-size: 3rem;
-            font-weight: 900;
+            display: flex; justify-content: space-between; align-items: flex-end; padding: 40px; 
+            background: rgba(0,0,0,0.05); border-top: 2px solid #ccc; position: relative; z-index: 100;
         }
+        body.dark-mode .footer { background: rgba(0,0,0,0.4); border-top: 2px solid #333; }
         
-        .footer-left { color: red; }
-        .footer-right { color: blue; }
+        .footer-side { display: flex; flex-direction: column; align-items: center; }
+        .footer-name { font-size: 3rem; font-weight: 900; }
+        .footer-left .footer-name { color: #ff3333; }
+        .footer-right .footer-name { color: #3366ff; }
+        
+        .footer-pts {
+            font-size: 1.2rem; font-weight: 700; color: #555; background: rgba(0,0,0,0.05);
+            padding: 5px 15px; border-radius: 20px; margin-top: 10px; border: 1px solid #ccc;
+        }
+        body.dark-mode .footer-pts { color: #ccc; background: rgba(255,255,255,0.1); border-color: #555; }
 
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 100;
+        .leverage-container {
+            flex: 1; margin: 0 40px; display: flex; flex-direction: column; align-items: center;
+        }
+        .leverage-title {
+            font-size: 1rem; font-weight: 900; color: #777; margin-bottom: 10px; letter-spacing: 2px;
+        }
+        .leverage-bar-wrapper {
+            width: 100%; height: 35px; background: #333; border-radius: 20px; overflow: hidden;
+            display: flex; box-shadow: inset 0 3px 10px rgba(0,0,0,0.5); border: 3px solid #555;
+        }
+        .lev-fill-left {
+            height: 100%; background: linear-gradient(90deg, #aa0000, #ff3333);
+            display: flex; align-items: center; justify-content: flex-start; padding-left: 15px;
+            font-weight: 900; font-size: 1.1rem; color: white; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box; text-shadow: 0 2px 5px rgba(0,0,0,0.8); overflow: hidden;
+        }
+        .lev-fill-right {
+            height: 100%; background: linear-gradient(90deg, #3366ff, #0033aa);
+            display: flex; align-items: center; justify-content: flex-end; padding-right: 15px;
+            font-weight: 900; font-size: 1.1rem; color: white; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box; text-shadow: 0 2px 5px rgba(0,0,0,0.8); overflow: hidden;
         }
 
-        /* --- MOBILE OPTIMIZATION (HIGH PRIORITY OVERLAP & CARD SIZE FIX) --- */
+        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+
+        /* --- OVERLAYS & MODALS --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+            z-index: 3000; display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        .close-modal {
+            position: absolute; top: 20px; right: 30px; font-size: 2.5rem;
+            color: white; cursor: pointer; z-index: 3010;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5); transition: color 0.2s;
+        }
+        .close-modal:hover { color: #ff3333; }
+        
+        .modal-content-wrapper {
+            width: 85vw; height: 75vh; border: 3px solid #00ffcc;
+            border-radius: 12px; background: #111; box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden; position: relative; touch-action: none;
+        }
+        #modal-img { max-width: 100%; max-height: 100%; object-fit: contain; cursor: grab; transform-origin: top left; }
+        #modal-img:active { cursor: grabbing; }
+        #modal-video { width: 100%; height: 100%; object-fit: contain; }
+
+        .modal-controls { margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; z-index: 3010; }
+        .modal-controls button, .modal-controls a {
+            padding: 10px 20px; background: #333; color: #fff; border: 1px solid #555;
+            border-radius: 6px; cursor: pointer; text-decoration: none; font-family: inherit;
+            font-weight: bold; font-size: 0.9rem; transition: background 0.2s, transform 0.1s;
+        }
+        .modal-controls button:hover, .modal-controls a:hover { background: #555; }
+        .modal-controls button:active, .modal-controls a:active { transform: scale(0.95); }
+        .modal-controls a.download-btn { background: #ffcc00; color: #000; border: none; box-shadow: 0 4px 10px rgba(255,204,0,0.3); }
+        .modal-controls a.download-btn:hover { background: #ffdd33; }
+
+        /* SCORE POPUP SPECIFICS */
+        .score-wrapper {
+            background: #1a1a1a; border: 2px solid #00ffcc; border-radius: 15px;
+            padding: 30px; width: 90vw; max-width: 450px; text-align: center;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.8); position: relative;
+        }
+        .icon-btn {
+            background: #333; color: #fff; border: 1px solid #555; border-radius: 50%;
+            width: 45px; height: 45px; font-size: 1.2rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .icon-btn:active { transform: scale(0.9); }
+        input[type=range] { -webkit-appearance: none; width: 60%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 28px; width: 28px; border-radius: 50%;
+            background: #00ffcc; cursor: pointer; margin-top: -10px; box-shadow: 0 0 15px #00ffcc;
+        }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: #444; border-radius: 4px; }
+        .num-btn {
+            background: #333; color: #fff; border: 1px solid #555; border-radius: 6px;
+            width: 38px; height: 38px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
+        }
+        .num-btn:hover, .num-btn.active { background: #00ffcc; color: #000; border-color: #00ffcc; transform: scale(1.1); }
+        .submit-btn {
+            background: #00ffcc; color: #000; font-size: 1.2rem; font-weight: bold;
+            padding: 12px 30px; border: none; border-radius: 8px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.4); transition: transform 0.2s; margin-top: 10px;
+        }
+        .submit-btn:active { transform: scale(0.95); }
+
+        /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 900px) {
-            /* Move controls and panel out of fixed positioning so they stack naturally */
             .top-right-controls {
-                position: relative;
-                flex-direction: row;
-                justify-content: center;
-                gap: 10px;
-                top: 0; right: 0;
-                padding-top: 15px;
-                width: 100%;
+                position: relative; flex-direction: row; justify-content: center; align-items: center;
+                flex-wrap: wrap; gap: 10px; top: 0; right: 0; padding-top: 15px; width: 100%;
             }
-            .control-btn {
-                font-size: 0.75rem;
-                padding: 8px 12px;
-            }
+            .last-updated { width: 100%; text-align: center; margin-bottom: 5px; box-shadow: none; background: transparent; }
+            .control-btn { font-size: 0.65rem; padding: 5px 8px; }
+            #info-panel { position: relative; top: 0; left: 0; max-width: 90%; margin: 15px auto; padding: 12px; z-index: 250; }
+            .info-tooltip { width: 85vw; max-width: 350px; font-size: 0.75rem; left: 50%; transform: translateX(-50%); }
             
-            #info-panel {
-                position: relative;
-                top: 0; left: 0;
-                max-width: 90%;
-                margin: 15px auto;
-                padding: 12px;
-                box-sizing: border-box;
-                z-index: 250;
-            }
-            
-            .info-button {
-                padding: 8px 10px;
-                font-size: 0.75rem;
-            }
-            
-            .info-tooltip {
-                width: 85vw; /* Fit screen width */
-                max-width: 350px;
-                font-size: 0.75rem;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-            
-            /* Compact horizontal scrollable decks container directly under info panel */
-            .decks-wrapper {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                width: 100%;
-                padding-top: 5px; /* No more 130px fixed clearance needed */
-                overflow: hidden;
-            }
+            .decks-wrapper { display: flex; flex-direction: column; gap: 8px; width: 100%; padding-top: 5px; overflow: hidden; }
             .deck-left, .deck-right {
-                position: relative;
-                top: auto; left: auto; right: auto; bottom: auto;
-                transform: none;
-                width: 100%;
-                flex-direction: row;
-                align-items: center;
-                overflow-x: auto;
-                padding: 4px 10px;
-                box-sizing: border-box;
-                max-height: none;
-                z-index: 150;
+                position: relative; top: auto; left: auto; right: auto; bottom: auto; transform: none; width: 100%;
+                flex-direction: row; align-items: center; overflow-x: auto; padding: 6px 10px; box-sizing: border-box; z-index: 150;
             }
-            .deck-left::-webkit-scrollbar, .deck-right::-webkit-scrollbar { 
-                display: block; 
-                height: 4px; 
-            }
-            .deck-left::-webkit-scrollbar-thumb, .deck-right::-webkit-scrollbar-thumb { 
-                background: #888; 
-                border-radius: 2px; 
-            }
+            .deck-left::-webkit-scrollbar, .deck-right::-webkit-scrollbar { display: block; height: 4px; }
+            .deck-left::-webkit-scrollbar-thumb, .deck-right::-webkit-scrollbar-thumb { background: #888; border-radius: 2px; }
             
-            /* Small, neat label next to cards */
-            .deck-heading {
-                margin: 0 8px 0 0;
-                font-size: 0.65rem;
-                padding: 6px 8px;
-                flex-shrink: 0;
-                border-radius: 4px;
-                white-space: nowrap;
-            }
-
-            /* Small, readable mobile escalation cards */
+            .deck-heading { margin: 0 8px 0 0; font-size: 0.65rem; padding: 6px 8px; flex-shrink: 0; }
             .playing-card {
-                min-width: 90px;
-                max-width: 100px;
-                min-height: 45px;
-                padding: 5px 8px;
-                margin-right: 8px;
-                font-size: 0.6rem;
-                line-height: 1.2;
-                border-width: 2px;
-                border-radius: 4px;
-                flex-shrink: 0;
+                min-width: 100px; max-width: 120px; min-height: 45px; padding: 6px 8px; margin-right: 8px;
+                font-size: 0.6rem; line-height: 1.2; flex-shrink: 0;
             }
-            .left-playing-card:hover, .right-playing-card:hover {
-                transform: scale(1.08) translateY(-4px);
-            }
+            .left-playing-card:hover { transform: scale(1.08) translateY(-4px); }
+            .right-playing-card:hover { transform: scale(1.08) translateY(-4px); }
 
-            /* Timeline Container */
-            .container {
-                padding: 20px 8px 50px 8px; 
-                max-width: 100%;
-            }
-
-            /* CRITICAL FIX: Zero overlap for central dates and card titles */
-            .event-container {
-                position: relative;
-                padding-top: 24px; /* Creates clean headroom for date badge */
-                margin-bottom: 45px;
-            }
-            .date {
-                top: 0; /* Positions date on the trunk directly above cards */
-                left: 50%;
-                transform: translateX(-50%);
-                font-size: 0.65rem;
-                padding: 3px 8px;
-                border-radius: 10px;
-                white-space: nowrap;
-                z-index: 20;
-            }
-
-            .card {
-                width: 44%;
-                padding: 12px 10px;
-                font-size: 0.75rem;
-                line-height: 1.3;
-            }
-            .common-card {
-                width: 88%;
-            }
-            .checkpoint {
-                font-size: 0.8rem;
-                padding: 8px 12px;
-            }
-            .checkpoint-container {
-                margin-bottom: 45px;
-            }
-            .footer {
-                font-size: 1.5rem;
-                padding: 25px 12px;
-            }
-            #landing-page h1 {
-                font-size: 1.8rem;
-            }
-            .conflict-btn {
-                font-size: 1.1rem;
-                padding: 10px 20px;
-            }
+            .container { padding: 20px 8px 50px 8px; max-width: 100%; }
+            .event-container { position: relative; padding-top: 30px; margin-bottom: 55px; } /* Increased clearance for date */
+            .date { top: 0; left: 50%; transform: translateX(-50%); font-size: 0.65rem; padding: 3px 8px; }
+            .card { width: 44%; padding: 12px 10px; font-size: 0.75rem; line-height: 1.3; }
+            .common-card { width: 88%; }
+            
+            .footer { flex-direction: column; padding: 20px; gap: 20px; align-items: stretch; }
+            .footer-side { flex-direction: row; justify-content: space-between; width: 100%; align-items: center; }
+            .footer-name { font-size: 1.8rem; }
+            .footer-pts { font-size: 1rem; margin-top: 0; }
+            .leverage-container { margin: 10px 0; order: -1; } /* Place leverage bar at top of mobile footer */
+            .leverage-bar-wrapper { height: 25px; }
+            
+            .modal-content-wrapper { width: 95vw; height: 65vh; border-width: 2px; }
+            .close-modal { top: 10px; right: 15px; font-size: 2rem; }
+            .modal-controls button, .modal-controls a { font-size: 0.75rem; padding: 8px 12px; }
+            .num-btn { width: 32px; height: 32px; font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -664,35 +452,31 @@
             <div class="bg-right" id="bg-right"></div>
         </div>
 
-        <!-- Top Right Controls (Now flow naturally on mobile) -->
         <div class="top-right-controls">
+            <div class="last-updated" id="last-updated-text"></div>
             <button class="control-btn" onclick="showLanding()">Back to Zones</button>
             <button class="control-btn" id="theme-toggle">Dark Mode</button>
         </div>
 
-        <!-- Top Left Dynamic Info Panel (Now flows naturally on mobile) -->
         <div id="info-panel">
             <div class="info-line" id="info-start-date"></div>
             <div class="info-line" id="info-days-count"></div>
             
             <div class="info-button-container" id="mou-container" style="display:none;">
-                <div class="info-button" onclick="togglePin('mou-container')">14 Points of June MOU (17 June 2026)</div>
+                <div class="info-button" onclick="togglePin('mou-container')">14 Points of June MOU (17 Jun 2026)</div>
                 <div class="info-tooltip" id="mou-tooltip"></div>
             </div>
 
             <div class="info-button-container" id="demands-container" style="display:none;">
-                <div class="info-button" onclick="togglePin('demands-container')">7 Demands by Iran for talks to begin</div>
+                <div class="info-button" onclick="togglePin('demands-container')">7 Demands by Iran (18 Sep 2026)</div>
                 <div class="info-tooltip" id="demands-tooltip"></div>
             </div>
         </div>
         
         <canvas id="particles"></canvas>
 
-        <!-- Playing Cards Decks Wrapper (Flows naturally on mobile) -->
         <div class="decks-wrapper">
-            <!-- Playing Cards Deck Left -->
             <div class="deck-left" id="deck-left"></div>
-            <!-- Playing Cards Deck Right -->
             <div class="deck-right" id="deck-right"></div>
         </div>
 
@@ -700,40 +484,107 @@
             <div class="trunk"></div>
         </div>
 
+        <!-- Dynamic Leverage Dashboard -->
         <div class="footer">
-            <div class="footer-left" id="label-left">USA</div>
-            <div class="footer-right" id="label-right">IRAN</div>
-        </div>
+            <div class="footer-side footer-left">
+                <div class="footer-name" id="label-left">USA</div>
+                <div class="footer-pts" id="pts-left">Points: 0</div>
+            </div>
+            
+            <div class="leverage-container">
+                <div class="leverage-title">POWER LEVERAGE</div>
+                <div class="leverage-bar-wrapper">
+                    <div class="lev-fill-left" id="bar-left" style="width: 50%;">50%</div>
+                    <div class="lev-fill-right" id="bar-right" style="width: 50%;">50%</div>
+                </div>
+            </div>
 
+            <div class="footer-side footer-right">
+                <div class="footer-name" id="label-right">IRAN</div>
+                <div class="footer-pts" id="pts-right">Points: 0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Screen Media Modal -->
+    <div id="media-modal" class="modal-overlay" onclick="closeMediaModal()">
+        <span class="close-modal">✖</span>
+        <div class="modal-content-wrapper" id="modal-wrapper" onclick="event.stopPropagation()">
+            <img id="modal-img" src="" alt="Card Asset" style="display:none;">
+            <video id="modal-video" src="" controls style="display:none;"></video>
+        </div>
+        <div class="modal-controls" onclick="event.stopPropagation()">
+            <button id="zoom-in-btn" onclick="zoomImage(1.2)">➕ Zoom In</button>
+            <button id="zoom-out-btn" onclick="zoomImage(0.8)">➖ Zoom Out</button>
+            <button id="reset-zoom-btn" onclick="resetZoom()">🔄 Reset</button>
+            <a id="download-btn" class="download-btn" href="#" download target="_blank">📥 Download Asset</a>
+        </div>
+    </div>
+
+    <!-- Interactive Point System Modal -->
+    <div id="score-modal" class="modal-overlay" onclick="closeScoreModal()">
+        <div class="score-wrapper" onclick="event.stopPropagation()">
+            <span class="close-modal" style="top: 15px; right: 20px;" onclick="closeScoreModal()">✖</span>
+            <h2 style="color: #00ffcc; margin-top:0;">Award Leverage Points</h2>
+            <p style="color: #aaa; font-size: 0.8rem; margin-bottom: 20px;">Assign points (0-10) based on how much leverage this specific event provides.</p>
+            
+            <div style="font-size: 3.5rem; font-weight: 900; color: #fff; margin-bottom: 20px;">
+                <span id="score-display-val">0</span><span style="font-size: 1.5rem; color: #555;"> / 10</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px;">
+                <button class="icon-btn" onclick="adjustScore(-1)">➖</button>
+                <input type="range" id="score-slider" min="0" max="10" value="0" oninput="updateScoreDisplay(this.value)">
+                <button class="icon-btn" onclick="adjustScore(1)">➕</button>
+            </div>
+            
+            <div class="quick-numbers" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px;">
+                <button class="num-btn" onclick="setScore(0)">0</button>
+                <button class="num-btn" onclick="setScore(1)">1</button>
+                <button class="num-btn" onclick="setScore(2)">2</button>
+                <button class="num-btn" onclick="setScore(3)">3</button>
+                <button class="num-btn" onclick="setScore(4)">4</button>
+                <button class="num-btn" onclick="setScore(5)">5</button>
+                <button class="num-btn" onclick="setScore(6)">6</button>
+                <button class="num-btn" onclick="setScore(7)">7</button>
+                <button class="num-btn" onclick="setScore(8)">8</button>
+                <button class="num-btn" onclick="setScore(9)">9</button>
+                <button class="num-btn" onclick="setScore(10)">10</button>
+            </div>
+            
+            <button class="submit-btn" onclick="submitScore()">Confirm Points</button>
+        </div>
     </div>
 
     <script>
         const midtermElectionDate = "2026-11-03"; 
+        let currentZoneId = 'US_IRAN';
+        let userScores = {}; // Memory for user-awarded scores
+        let activeScoreContext = null; 
+        
+        // Dynamically grab the exact date this HTML file was last modified and display it
+        document.addEventListener('DOMContentLoaded', () => {
+            const lastUpdatedObj = new Date(document.lastModified);
+            const dateOptions = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('last-updated-text').innerText = "Last Updated: " + lastUpdatedObj.toLocaleDateString('en-US', dateOptions);
+        });
         
         function calculateDaysUntil(dateString) {
             const target = new Date(dateString);
-            const now = new Date();
-            const diffTime = target - now;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffDays = Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24));
             return diffDays;
         }
 
         function calculateDaysSince(dateString) {
             const start = new Date(dateString);
-            const now = new Date();
-            const diffTime = Math.abs(now - start);
-            return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return Math.floor(Math.abs(new Date() - start) / (1000 * 60 * 60 * 24));
         }
 
         function togglePin(containerId) {
             const container = document.getElementById(containerId);
             const isPinned = container.classList.contains('pinned');
-            
             document.querySelectorAll('.info-button-container').forEach(c => c.classList.remove('pinned'));
-            
-            if (!isPinned) {
-                container.classList.add('pinned');
-            }
+            if (!isPinned) container.classList.add('pinned');
         }
 
         document.addEventListener('click', (e) => {
@@ -742,6 +593,7 @@
             }
         });
 
+        // Expanded Data with Reliable Unsplash CDNs for Images and Secure HTTPS Videos
         const conflictData = {
             'US_IRAN': {
                 nameLeft: "USA",
@@ -751,47 +603,57 @@
                 startDateText: "Conflict Started: February 28, 2026",
                 startDateObj: "2026-02-28",
                 mouContent: `<strong>14 Points of the June MOU (17 June 2026)</strong><br><br>
-                1. Ceasing hostilities “on all fronts”.<br><br>
-                2. Respect for sovereignty, territorial integrity and internal affairs.<br><br>
-                3. Negotiating a final deal within 60 days.<br><br>
-                4. Lifting the US blockade and removing its forces within 30 days.<br><br>
-                5. Iran will facilitate commercial shipping traffic through Strait of Hormuz.<br><br>
-                6. Developing a US$300 billion reconstruction plan for Iran.<br><br>
-                7. The US and the UN will terminate sanctions on Iran.<br><br>
-                8. Iran will not procure a nuclear weapon and allow inspections.<br><br>
-                9. Both sides will “maintain the status quo” until the final deal.<br><br>
-                10. The US will lift sanctions on Iranian oil.<br><br>
-                11. The US will enable access to frozen funds.<br><br>
-                12. A monitoring mechanism will be established.<br><br>
-                13. Certain parts of the MOU must be met before others are discussed.<br><br>
+                1. Ceasing hostilities “on all fronts”.<br>
+                2. Respect for sovereignty, territorial integrity and internal affairs.<br>
+                3. Negotiating a final deal within 60 days.<br>
+                4. Lifting the US blockade and removing its forces within 30 days.<br>
+                5. Iran will facilitate commercial shipping traffic through Strait of Hormuz.<br>
+                6. Developing a US$300 billion reconstruction plan for Iran.<br>
+                7. The US and the UN will terminate sanctions on Iran.<br>
+                8. Iran will not procure a nuclear weapon and allow inspections.<br>
+                9. Both sides will “maintain the status quo” until the final deal.<br>
+                10. The US will lift sanctions on Iranian oil.<br>
+                11. The US will enable access to frozen funds.<br>
+                12. A monitoring mechanism will be established.<br>
+                13. Certain parts of the MOU must be met before others are discussed.<br>
                 14. The final deal will be endorsed in a UN Security Council resolution.`,
-                demandsContent: `<strong>7 Demands by Iran for talks to begin regarding reopening of Strait of Hormuz, and a permanent end to war.</strong><br><br>
-                1. The US must lift the maritime blockade imposed on Iran. This refers to ending the naval restrictions/blockade on Iranian ports and shipping that Iranian officials describe as part of the ongoing pressure and conflict.<br><br>
-                2. Iran’s frozen assets should be restored. Full release/return of Iranian financial assets that have been frozen or seized (figures cited in related Iranian statements have ranged into the tens or around $100 billion in some reports).<br><br>
-                3. Sanctions imposed on Iran’s oil exports must be lifted. Removal of restrictions specifically targeting Iranian oil sales and exports.<br><br>
-                4. All actions being taken by the US under the pretext of threats and military operations must be halted completely. A complete stop to US military threats, operations, and related pressure measures against Iran.<br><br>
-                5. An end to the war and military aggression against Iran and its regional allies. Cessation of hostilities “on all fronts,” including against Iran itself and its regional partners/allies (Lebanon/Hezbollah, Gaza, Yemen/Houthis, and related theaters have been repeatedly referenced in Rezaei’s broader comments).<br><br>
-                6. The withdrawal of US military forces from areas surrounding Iran’s borders. Pullback of American forces from the broader region near Iran.<br><br>
-                7. Compensation for the damage inflicted on Iran, and a commitment not to interfere with Iran’s nuclear and missile capabilities. Payment for wartime damages (some earlier Iranian statements have referenced figures as high as ~$300 billion in related contexts) plus a pledge of non-interference in Iran’s nuclear program and missile capabilities.<br><br>
+                
+                demandsContent: `<strong>7 Demands by Iran for talks to begin regarding reopening of Strait of Hormuz, and a permanent end to war. (Issued: 18 September 2026)</strong><br><br>
+                1. <strong>The US must lift the maritime blockade imposed on Iran.</strong> This specifically refers to ending the naval restrictions on Iranian ports and shipping vessels in the Persian Gulf and Sea of Oman.<br><br>
+                2. <strong>Iran’s frozen assets should be restored.</strong> Ensuring the full release and unfettered repatriation of tens of billions of dollars in Iranian financial assets illegally seized or frozen in foreign bank accounts.<br><br>
+                3. <strong>Sanctions imposed on Iran’s oil exports must be lifted.</strong> Allowing Iran to freely sell its crude oil, petrochemicals, and related energy products on the global market without secondary US sanctions on international buyers.<br><br>
+                4. <strong>All actions being taken by the US under the pretext of threats and military operations must be halted completely.</strong> This includes a total cessation of reconnaissance flights, drone operations, and aggressive naval posturing near Iranian territorial waters.<br><br>
+                5. <strong>An end to the war and military aggression against Iran and its regional allies.</strong> Demanding an absolute cessation of hostilities and covert operations targeting the Axis of Resistance in Lebanon, Gaza, Yemen, and Iraq.<br><br>
+                6. <strong>The withdrawal of US military forces from areas surrounding Iran’s borders.</strong> A complete pullout of American troops, bases, and strategic assets from neighboring countries in the Middle East to prevent further regional provocations.<br><br>
+                7. <strong>Compensation for the damage inflicted on Iran, and a commitment not to interfere with Iran’s nuclear and missile capabilities.</strong> This includes financial reparations for massive economic losses due to sanctions, alongside an ironclad guarantee to respect Iran's sovereign right to domestic defense and peaceful nuclear technology.<br><br>
                 Source: Mohsen Rezaei on X`,
+                
                 cardsLeft: [
-                    "They can use tactical nukes on Iran",
-                    "Destroy pickaxe mountain",
-                    "Restart military strikes",
-                    "Make a deal",
-                    "More economic pressure"
+                    { text: "They can use tactical nukes on Iran", mediaType: "image", mediaSrc: "https://images.unsplash.com/photo-1580136608260-4eb11f4b24fe?q=80&w=1000" }, 
+                    { text: "Destroy pickaxe mountain", mediaType: "video", mediaSrc: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" }, 
+                    { text: "Restart military strikes", mediaType: "image", mediaSrc: "https://images.unsplash.com/photo-1508614999368-9260051292e5?q=80&w=1000" }, 
+                    { text: "Make a deal", mediaType: "image", mediaSrc: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1000" }, 
+                    { text: "More economic pressure", mediaType: "image", mediaSrc: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=1000" } 
                 ],
                 cardsRight: [
-                    "Destroy all US bases in the region",
-                    "Withdraw from NPT",
-                    "Cut the undersea cables",
-                    "Strike US Navy"
+                    { text: "Destroy all US bases in the region", mediaType: "image", mediaSrc: "https://images.unsplash.com/photo-1543360408-724bf1de7753?q=80&w=1000" }, 
+                    { text: "Withdraw from NPT", mediaType: "image", mediaSrc: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=1000" }, 
+                    { text: "Cut the undersea cables", mediaType: "image", mediaSrc: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1000" }, 
+                    { text: "Strike US Navy", mediaType: "image", mediaSrc: "https://images.unsplash.com/photo-1558231011-8c46de64d0bc?q=80&w=1000" } 
                 ],
                 events: [
                     {
                         type: "checkpoint",
                         text: "KEY CHECKPOINT: US Midterm Elections (NOV 3 2026)",
                         dateObj: midtermElectionDate
+                    },
+                    {
+                        type: "event",
+                        date: "27-09-2026",
+                        left: "",
+                        right: "Iran ready for 'doomsday war', FM Araghchi says.",
+                        rightRef: "https://www.aljazeera.com/video/newsfeed/2026/9/27/iran-ready-for-doomsday-war-fm-araghchi-says",
+                        rightRefTitle: "Iran Ready for Doomsday War"
                     },
                     {
                         type: "event",
@@ -815,6 +677,14 @@
                         text: "Iran's Araqchi says now up to US to accept 7-day plan.",
                         ref: "https://www.reuters.com/world/middle-east/irans-araqchi-says-now-up-us-accept-7-day-plan-2026-09-25/",
                         refTitle: "Araqchi: Up to US to accept 7-day plan"
+                    },
+                    {
+                        type: "event",
+                        date: "24-09-2026",
+                        left: "",
+                        right: "Iran threatens to expand war to Indian Ocean if US attacks again.",
+                        rightRef: "https://www.thehindu.com/news/international/iran-threatens-to-expand-war-to-indian-ocean-if-us-attacks-again/article71503625.ece",
+                        rightRefTitle: "Iran Threatens Indian Ocean Expansion"
                     },
                     {
                         type: "event",
@@ -869,6 +739,14 @@
                         right: "Iran deploys around 450k troops to its borders.",
                         rightRef: "https://www.freepressjournal.in/world/iran-deploys-420000-strong-army-along-borders-amid-possible-us-ground-invasion",
                         rightRefTitle: "Iran Deploys 420K Army Along Borders"
+                    },
+                    {
+                        type: "event",
+                        date: "07-09-2026",
+                        left: "",
+                        right: "Iran to announce new restricted zone in the Gulf, expanding control beyond the Strait of Hormuz.",
+                        rightRef: "https://www.arabnews.com/middle-east/iran-to-announce-new-restricted-zone-in-the-gulf-in-the-coming-days-3000771",
+                        rightRefTitle: "Iran Expands Control Beyond Strait of Hormuz"
                     }
                 ]
             },
@@ -877,12 +755,8 @@
                 nameRight: "ANSAR ALLAH (HOUTHIS)",
                 flagLeft: "url('https://upload.wikimedia.org/wikipedia/commons/0/0d/Flag_of_Saudi_Arabia.svg')",
                 flagRight: "url('https://upload.wikimedia.org/wikipedia/commons/8/89/Flag_of_Yemen.svg')", 
-                startDateText: null, 
-                startDateObj: null,
-                mouContent: null,
-                demandsContent: null,
-                cardsLeft: [], 
-                cardsRight: [], 
+                startDateText: null, startDateObj: null, mouContent: null, demandsContent: null,
+                cardsLeft: [], cardsRight: [], 
                 events: [
                     {
                         type: "event",
@@ -919,43 +793,40 @@
             if(audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
         }
 
         function renderDeck(container, cardsData, isLeft, countryName) {
             container.innerHTML = ''; 
-            
             if (cardsData.length > 0) {
                 const heading = document.createElement('div');
                 heading.className = 'deck-heading';
                 heading.innerText = `Available cards with ${countryName}`;
                 container.appendChild(heading);
             }
-            
-            cardsData.forEach((cardText) => {
+            cardsData.forEach((cardObj) => {
                 const card = document.createElement('div');
                 card.className = `playing-card ${isLeft ? 'left-playing-card' : 'right-playing-card'}`;
-                card.innerText = cardText;
-
-                card.onmouseenter = () => {
+                const text = typeof cardObj === 'string' ? cardObj : cardObj.text;
+                card.innerHTML = `<span>${text}</span>`;
+                card.onclick = () => {
                     playSound();
+                    if (typeof cardObj === 'object' && cardObj.mediaSrc) {
+                        openMediaModal(cardObj.mediaType, cardObj.mediaSrc);
+                    }
                 };
-
                 container.appendChild(card);
             });
         }
 
         function loadConflict(zoneId) {
+            currentZoneId = zoneId;
             const data = conflictData[zoneId];
-            
             const leftPrefix = data.nameLeft.charAt(0).toUpperCase();
             const rightPrefix = data.nameRight.charAt(0).toUpperCase();
 
@@ -971,12 +842,10 @@
                 infoPanel.style.display = 'block';
                 document.getElementById('info-start-date').innerText = data.startDateText;
                 document.getElementById('info-days-count').innerText = `Days since war started: ${calculateDaysSince(data.startDateObj)}`;
-                
                 if (data.mouContent) {
                     document.getElementById('mou-container').style.display = 'block';
                     document.getElementById('mou-tooltip').innerHTML = data.mouContent;
                 }
-                
                 if (data.demandsContent) {
                     document.getElementById('demands-container').style.display = 'block';
                     document.getElementById('demands-tooltip').innerHTML = data.demandsContent;
@@ -990,45 +859,29 @@
             let leftCount = data.events.filter(e => e.type === 'event' && e.left && e.left.trim() !== "").length;
             let rightCount = data.events.filter(e => e.type === 'event' && e.right && e.right.trim() !== "").length;
 
-            data.events.forEach((evt) => {
+            data.events.forEach((evt, idx) => {
                 if (evt.type === 'checkpoint') {
                     const row = document.createElement('div');
                     row.className = 'checkpoint-container';
-                    
                     const daysRemaining = calculateDaysUntil(evt.dateObj);
                     let daysText = daysRemaining > 0 ? `${daysRemaining} days remaining` : "Date Passed";
-                    
-                    row.innerHTML = `
-                        <div class="checkpoint">
-                            ${evt.text}
-                            <div class="checkpoint-days">${daysText}</div>
-                        </div>
-                    `;
+                    row.innerHTML = `<div class="checkpoint">${evt.text}<div class="checkpoint-days">${daysText}</div></div>`;
                     timelineContainer.appendChild(row);
 
                 } else if (evt.type === 'history') {
                     const row = document.createElement('div');
                     row.className = 'checkpoint-container';
-                    
-                    row.innerHTML = `
-                        <div class="checkpoint history-checkpoint">
-                            ${evt.text}
-                        </div>
-                    `;
+                    row.innerHTML = `<div class="checkpoint history-checkpoint">${evt.text}</div>`;
                     timelineContainer.appendChild(row);
 
                 } else if (evt.type === 'common') {
                     const row = document.createElement('div');
                     row.className = 'checkpoint-container'; 
-                    
                     const commonCard = document.createElement('div');
                     commonCard.className = 'card common-card';
-                    
                     let refHtml = evt.ref ? `<a href="${evt.ref}" target="_blank">${evt.refTitle || 'Source Article'}</a>` : 'News Links & Refs Coming Soon';
-                    
                     commonCard.innerHTML = `<div style="font-size:0.7rem; color:#555; margin-bottom:10px; font-weight:bold;">${evt.date}</div><p>${evt.text}</p><span class="tooltip">${refHtml}</span>`;
                     commonCard.onmouseenter = playSound;
-
                     row.appendChild(commonCard);
                     timelineContainer.appendChild(row);
 
@@ -1041,37 +894,35 @@
                     leftCard.className = `card left-card ${!hasLeftText ? 'blank' : ''}`;
                     if(hasLeftText) {
                         let leftRefHtml = evt.leftRef ? `<a href="${evt.leftRef}" target="_blank">${evt.leftRefTitle || 'Source Article'}</a>` : 'News Links & Refs Coming Soon';
-                        leftCard.innerHTML = `<p>${evt.left}</p><span class="event-id">${leftPrefix}.${leftCount}</span><span class="tooltip">${leftRefHtml}</span>`;
-                        leftCard.onmouseenter = playSound;
-                        leftCount--;
+                        let scoreHtml = `<div class="score-btn" onclick="openScorePopup('${zoneId}', 'left', ${idx}, event)">⭐ Score: <span id="score-left-${idx}">${userScores[`${zoneId}-left-${idx}`] || 0}</span>/10</div>`;
+                        leftCard.innerHTML = `<p>${evt.left}</p><span class="event-id">${leftPrefix}.${leftCount}</span><span class="tooltip">${leftRefHtml}</span>${scoreHtml}`;
+                        leftCard.onmouseenter = playSound; leftCount--;
                     }
 
                     const dateLabel = document.createElement('div');
-                    dateLabel.className = 'date';
-                    dateLabel.innerText = evt.date;
+                    dateLabel.className = 'date'; dateLabel.innerText = evt.date;
 
                     const rightCard = document.createElement('div');
                     const hasRightText = evt.right && evt.right.trim() !== "";
                     rightCard.className = `card right-card ${!hasRightText ? 'blank' : ''}`;
                     if(hasRightText) {
                         let rightRefHtml = evt.rightRef ? `<a href="${evt.rightRef}" target="_blank">${evt.rightRefTitle || 'Source Article'}</a>` : 'News Links & Refs Coming Soon';
-                        rightCard.innerHTML = `<p>${evt.right}</p><span class="event-id">${rightPrefix}.${rightCount}</span><span class="tooltip">${rightRefHtml}</span>`;
-                        rightCard.onmouseenter = playSound;
-                        rightCount--;
+                        let scoreHtml = `<div class="score-btn" onclick="openScorePopup('${zoneId}', 'right', ${idx}, event)">⭐ Score: <span id="score-right-${idx}">${userScores[`${zoneId}-right-${idx}`] || 0}</span>/10</div>`;
+                        rightCard.innerHTML = `<p>${evt.right}</p><span class="event-id">${rightPrefix}.${rightCount}</span><span class="tooltip">${rightRefHtml}</span>${scoreHtml}`;
+                        rightCard.onmouseenter = playSound; rightCount--;
                     }
 
-                    row.appendChild(leftCard);
-                    row.appendChild(dateLabel);
-                    row.appendChild(rightCard);
+                    row.appendChild(leftCard); row.appendChild(dateLabel); row.appendChild(rightCard);
                     timelineContainer.appendChild(row);
                 }
             });
 
             document.getElementById('landing-page').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            // Calculate base and dynamic user scores for the layout
+            calculateLeverage(zoneId);
         }
 
         function showLanding() {
@@ -1079,38 +930,26 @@
             document.getElementById('landing-page').style.display = 'flex';
         }
 
-        document.getElementById('theme-toggle').addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-        });
+        document.getElementById('theme-toggle').addEventListener('click', () => { document.body.classList.toggle('dark-mode'); });
 
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-        
+        /* --- PARTICLES --- */
+        const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d');
         const particlesArray = [];
         class Particle {
             constructor() {
-                this.x = Math.random() * window.innerWidth;
-                this.y = Math.random() * window.innerHeight;
-                this.size = Math.random() * 3 + 1;
-                this.speedY = Math.random() * -1 - 0.5;
+                this.x = Math.random() * window.innerWidth; this.y = Math.random() * window.innerHeight;
+                this.size = Math.random() * 3 + 1; this.speedY = Math.random() * -1 - 0.5;
             }
             update() {
                 this.y += this.speedY;
-                if(this.y < 0) {
-                    this.y = canvas.height;
-                    this.x = Math.random() * canvas.width;
-                }
+                if(this.y < 0) { this.y = canvas.height; this.x = Math.random() * canvas.width; }
             }
             draw() {
                 ctx.fillStyle = document.body.classList.contains('dark-mode') ? 'rgba(0, 255, 204, 0.5)' : 'rgba(0, 0, 0, 0.2)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
             }
         }
-
         for(let i = 0; i < 50; i++) particlesArray.push(new Particle());
-
         function animate() {
             if(document.getElementById('main-content').style.display === 'block') {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1119,11 +958,162 @@
             requestAnimationFrame(animate);
         }
         animate();
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
+        /* --- INTERACTIVE LEVERAGE SCORING --- */
+        function openScorePopup(zoneId, side, index, event) {
+            event.stopPropagation(); // Prevents click from bubbling to any other elements
+            activeScoreContext = { zoneId, side, index };
+            let currentScore = userScores[`${zoneId}-${side}-${index}`] || 0;
+            document.getElementById('score-slider').value = currentScore;
+            updateScoreDisplay(currentScore);
+            document.getElementById('score-modal').style.display = 'flex';
+        }
+
+        function closeScoreModal() {
+            document.getElementById('score-modal').style.display = 'none';
+        }
+
+        function adjustScore(delta) {
+            let slider = document.getElementById('score-slider');
+            let val = parseInt(slider.value) + delta;
+            if(val < 0) val = 0; if(val > 10) val = 10;
+            slider.value = val;
+            updateScoreDisplay(val);
+        }
+
+        function setScore(val) {
+            document.getElementById('score-slider').value = val;
+            updateScoreDisplay(val);
+        }
+
+        function updateScoreDisplay(val) {
+            document.getElementById('score-display-val').innerText = val;
+            document.querySelectorAll('.num-btn').forEach(btn => {
+                if(parseInt(btn.innerText) === parseInt(val)) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+        }
+
+        function submitScore() {
+            if(!activeScoreContext) return;
+            let val = parseInt(document.getElementById('score-slider').value);
+            let { zoneId, side, index } = activeScoreContext;
+            
+            userScores[`${zoneId}-${side}-${index}`] = val; // Store
+            document.getElementById(`score-${side}-${index}`).innerText = val; // Update card label visually
+            
+            calculateLeverage(zoneId); // Update overall score
+            closeScoreModal();
+        }
+
+        function calculateLeverage(zoneId) {
+            const data = conflictData[zoneId];
+            
+            // Available Cards carry 10 points each
+            let leftPoints = data.cardsLeft.length * 10;
+            let rightPoints = data.cardsRight.length * 10;
+            
+            // Tally up timeline card scores designated by user
+            data.events.forEach((evt, idx) => {
+                if (evt.type === 'event') {
+                    if (evt.left && evt.left.trim() !== "") {
+                        leftPoints += userScores[`${zoneId}-left-${idx}`] || 0;
+                    }
+                    if (evt.right && evt.right.trim() !== "") {
+                        rightPoints += userScores[`${zoneId}-right-${idx}`] || 0;
+                    }
+                }
+            });
+            
+            let totalPoints = leftPoints + rightPoints;
+            let leftPct = totalPoints === 0 ? 50 : Math.round((leftPoints / totalPoints) * 100);
+            let rightPct = totalPoints === 0 ? 50 : 100 - leftPct;
+            
+            // Update Dashboard UI elements
+            document.getElementById('pts-left').innerText = `Points: ${leftPoints}`;
+            document.getElementById('pts-right').innerText = `Points: ${rightPoints}`;
+            
+            document.getElementById('bar-left').style.width = `${leftPct}%`;
+            document.getElementById('bar-left').innerText = `${leftPct}%`;
+            document.getElementById('bar-right').style.width = `${rightPct}%`;
+            document.getElementById('bar-right').innerText = `${rightPct}%`;
+        }
+
+        /* --- MEDIA MODAL PAN & ZOOM --- */
+        const modal = document.getElementById('media-modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalVideo = document.getElementById('modal-video');
+        const modalWrapper = document.getElementById('modal-wrapper');
+        const downloadBtn = document.getElementById('download-btn');
+        const zoomControls = [document.getElementById('zoom-in-btn'), document.getElementById('zoom-out-btn'), document.getElementById('reset-zoom-btn')];
+
+        let scale = 1; let panning = false; let pointX = 0; let pointY = 0; let start = { x: 0, y: 0 };
+
+        function openMediaModal(type, src) {
+            modal.style.display = 'flex';
+            downloadBtn.href = src; 
+            resetZoom();
+            if (type === 'image') {
+                modalImg.src = src; modalImg.style.display = 'block'; modalVideo.style.display = 'none';
+                zoomControls.forEach(btn => btn.style.display = 'block');
+            } else if (type === 'video') {
+                modalVideo.src = src; modalVideo.style.display = 'block'; modalImg.style.display = 'none';
+                zoomControls.forEach(btn => btn.style.display = 'none'); 
+            }
+        }
+
+        function closeMediaModal() {
+            modal.style.display = 'none';
+            modalVideo.pause(); modalVideo.src = ""; modalImg.src = "";
+        }
+
+        function setTransform() { modalImg.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`; }
+
+        function zoomImage(multiplier) {
+            scale *= multiplier;
+            if(scale < 0.5) scale = 0.5; if(scale > 10) scale = 10;
+            setTransform();
+        }
+
+        function resetZoom() {
+            scale = 1; pointX = 0; pointY = 0; setTransform();
+        }
+
+        // Mouse Pan & Zoom
+        modalWrapper.onmousedown = function (e) {
+            if(modalImg.style.display === 'none') return;
+            e.preventDefault();
+            start = { x: e.clientX - pointX, y: e.clientY - pointY }; panning = true;
+        }
+        modalWrapper.onmouseup = function (e) { panning = false; }
+        modalWrapper.onmouseleave = function (e) { panning = false; }
+        modalWrapper.onmousemove = function (e) {
+            if (!panning || modalImg.style.display === 'none') return;
+            e.preventDefault();
+            pointX = (e.clientX - start.x); pointY = (e.clientY - start.y); setTransform();
+        }
+        modalWrapper.onwheel = function (e) {
+            if(modalImg.style.display === 'none') return;
+            e.preventDefault();
+            let xs = (e.clientX - pointX) / scale, ys = (e.clientY - pointY) / scale;
+            let delta = (e.wheelDelta ? e.wheelDelta : -e.deltaY);
+            (delta > 0) ? (scale *= 1.1) : (scale /= 1.1);
+            if(scale < 0.5) scale = 0.5; if(scale > 10) scale = 10;
+            pointX = e.clientX - xs * scale; pointY = e.clientY - ys * scale; setTransform();
+        }
+
+        // Touch Pan
+        modalWrapper.addEventListener('touchstart', function(e) {
+            if(modalImg.style.display === 'none' || e.touches.length > 1) return;
+            start = { x: e.touches[0].clientX - pointX, y: e.touches[0].clientY - pointY }; panning = true;
+        }, {passive: true});
+        modalWrapper.addEventListener('touchmove', function(e) {
+            if (!panning || modalImg.style.display === 'none' || e.touches.length > 1) return;
+            e.preventDefault();
+            pointX = (e.touches[0].clientX - start.x); pointY = (e.touches[0].clientY - start.y); setTransform();
+        }, {passive: false});
+        modalWrapper.addEventListener('touchend', function(e) { panning = false; });
 
     </script>
 </body>
